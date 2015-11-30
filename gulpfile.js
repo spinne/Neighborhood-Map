@@ -8,6 +8,10 @@ gulp.task('scripts', function(){
 	gulp.src('dev/js/*.js')
 		.pipe(uglify())
 		.pipe(gulp.dest('dist/js/'));
+	
+	gulp.src('dev/js/lib/*.js')
+		.pipe(uglify())
+		.pipe(gulp.dest('dist/js/lib/'));
 });
 
 
