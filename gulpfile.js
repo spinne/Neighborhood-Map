@@ -21,7 +21,7 @@ gulp.task('styles', function(){
 gulp.task('inline', function(){
 	gulp.src('dev/*.html')
 		.pipe(inline())
-		.pipe(gulp.dest('dist'));
+		.pipe(gulp.dest('dist/'));
 });
 
 
@@ -30,4 +30,4 @@ gulp.task('deploy', function () {
     .pipe(deploy())
 });
 
-gulp.task('default', ['scripts', 'inline']);
+gulp.task('default', ['scripts', 'styles', 'inline']);
