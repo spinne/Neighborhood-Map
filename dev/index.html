@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Neighborhood Map Project">
+		<meta name="author" content="Sylvia Schmidt">
+		<title>Neighborhood Map Project</title>
+		
+		<!-- Added inline attribute to style.css for gulp-inline-source -->
+		<link href="css/style.css" rel="stylesheet" inline>
+	</head>
+	<body>
+		<header>
+		<form>
+			<label> Search:
+				<input placeholder="" type="search" data-bind="textInput: query, event: {keyup: search}" ></input>
+			</label>
+			<div><input type="radio" name="searchBy" value="name" data-bind="checked: searchBy"> Search by name</div>
+			<div><input type="radio" name="searchBy" value="type" data-bind="checked: searchBy"> Search by type</div>
+		</form>
+			<ul id="list" class="list" data-bind="foreach: locationList">
+				<li data-bind="text: name"></li>
+			</ul>
+		</header>
+		<div id="map" class="map"></div>
+		<script src="js/lib/jQuery-2.1.4.min.js"></script>
+		<script src="js/lib/knockout-3.4.0.min.js"></script>
+		<script src="js/app.js"></script>
+		<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdEqXcO5Cz4fCNsJzX8XrsQZk8_LNaG4o&libraries=places&callback=initMap">
+		</script>
+	</body>
+</html>

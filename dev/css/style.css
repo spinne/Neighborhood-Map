@@ -1,0 +1,716 @@
+body {
+	width: 100%;
+	height:100%;
+	margin: 0;
+}
+
+.map {
+	width: 100%;
+	/*height: 90vh;*/
+}
+	
+	/*
+	//alle Verstecken für Start
+	$('.page:not(.aktiv)').hide();
+	$('#artgesp').hide();
+	
+	// Die Variablen beim ersten Aufrufen speichern in Client localStorage
+	if(!localStorage.getItem("kategorien")){
+		var kategorien = "News|Studium|Fun";
+		localStorage.setItem("kategorien", JSON.stringify(kategorien));
+		
+		var qNews = "http://www.faz.net/aktuell/?rssview=1|http://www.welt.de/?service=Rss|http://www.spiegel.de/schlagzeilen/index.rss";
+		localStorage.setItem("News", JSON.stringify(qNews));
+		
+		var qUni ="http://www.haw-aw.de/rss.xml|http://newsfeed.zeit.de/studium/index|http://www.faz.net/aktuell/beruf-chance/?rssview=1";
+		localStorage.setItem("Studium", JSON.stringify(qUni));
+		
+		var qFun = "http://static.nichtlustig.de/rss/nichtrss.rss|http://feeds2.feedburner.com/StefanNiggemeier|http://geekandpoke.typepad.com/geekandpoke/atom.xml";
+		localStorage.setItem("Fun", JSON.stringify(qFun));
+		
+		var erstmal=true;
+		}
+		else{var erstmal = false; $('#erst').hide();}
+		
+		if(erstmal == true){$('#erst').show(); $('body').click(function(){$('#erst').hide();}); $('#erst').click(function(){$('#erst').hide();});}
+		
+		
+	// Leeren des localStorage
+	function leereStore(){
+		localStorage.clear();
+	}
+	
+	// Das Kategorie-Menü erstellen beim Laden der Seite
+	$(function(){
+		var kat = localStorage.getItem("kategorien");
+		kat = JSON.parse(kat);
+		var kats=new Array();
+		kats=kat.split("|");
+		var numkats = kats.length;
+		var selectInner ='';
+		for (var i=0; i<numkats; i++){
+			if(i == 0){
+			selectInner+='<option  selected="selected">'+kats[i]+'</option>'
+			}
+			else{
+			selectInner+='<option>'+ kats[i]+'</option>';
+			}
+		} 
+		
+		artLaden();
+		
+		$("#optionen").html(selectInner);
+		$("#gewaehlt").html(kats[0]);
+		$("#aktuellekats").html(function(){
+			var aktKats = '';
+			for (var i=0; i<numkats; i++){
+				aktKats +='<div class="kathuelle"><a href="javascript:waehlenLoes('+"'"+kats[i]+"'"+');"><div class="aktuellkats"><div class="aktuelle"> '+kats[i]+'</div><img src="icons/loeschen.png" alt="Löschen"/></div></a></div>';
+			}
+			return aktKats;
+			});
+		});
+	
+	//Das Kategorie-Menü aktualisieren, wenn eine neue Kategorie hinzukommt oder eine Kategorie gelöscht wird	
+	function selectKats(){
+		var kat = localStorage.getItem("kategorien");
+		kat = JSON.parse(kat);
+		var kats=new Array();
+		kats=kat.split("|");
+		var numkats = kats.length;
+		var selectInner ='';
+		for (var i=0; i<numkats; i++){
+			if(i == 0){
+			selectInner+='<option  selected="selected">'+kats[i]+'</option>'
+			}
+			else{
+			selectInner+='<option>'+ kats[i]+'</option>';
+			}
+		} 
+		
+		$("#optionen").html(selectInner);
+		$("#gewaehlt").html(kats[0]);
+		$("#aktuellekats").html(function(){
+			var aktKats = '';
+			for (var i=0; i<numkats; i++){
+				aktKats +='<div class="kathuelle"><a href="javascript:waehlenLoes('+"'"+kats[i]+"'"+');"><div class="aktuellkats"><div class="aktuelle"> '+kats[i]+'</div><img src="icons/loeschen.png" alt="Löschen"/></div></a></div>';
+			}
+			return aktKats;
+			});
+		};
+	
+	//Eine Kategorie löschen
+	function waehlenLoes(nameKat){
+		var kat = localStorage.getItem("kategorien");
+		kat = JSON.parse(kat);
+		var kats=new Array();
+		kats=kat.split("|");
+		if(kats.length ==1){
+			alert('Eine Kategorie muss übrig bleiben!');
+			}
+		else{
+			var sicher = confirm('Wollen Sie die Kategorie '+nameKat+' wirklich löschen?');
+			if(sicher){
+			var neueKats=new Array();
+			var k=0; 
+			for (var i=0; i<kats.length; i++){
+				if(nameKat != kats[i]){
+					neueKats[k] = kats[i];
+					k++;
+					}
+				}
+			var strKats = neueKats[0]
+			for (var i=1; i<neueKats.length; i++){
+				strKats+='|'+neueKats[i];
+			}
+			
+			localStorage.removeItem(nameKat);
+			localStorage.setItem("kategorien", JSON.stringify(strKats));
+			selectKats();
+			OnLoad();
+			}
+		}
+	}
+	
+	//Neue Kategorie erstellen
+	function neueKate(){
+		var nkname = $('input[name="nkname"]').val();
+		var nkq1 = $('input[name="nkq1"]').val();
+		var nkq2 = $('input[name="nkq2"]').val();
+		var nkq3 = $('input[name="nkq3"]').val();
+		
+		var nfehler = true;
+		var qfehler = true;
+		
+		var prnk = nkname.search(/\s/);
+		
+		if(nkname.length > 15 || nkname == 'maximal 15 Zeichen' || nkname == '' || prnk != -1){
+			$('#nknamefehler').show();
+		}
+		else{ nfehler = false; $('#nknamefehler').hide();}
+		
+		var prq1 = nkq1.substr(0,6);
+		var prq2 = nkq2.substr(0,6);
+		var prq3 = nkq3.substr(0,6);
+			
+		if((nkq1 != '' && (nkq1 == nkq2)) || (nkq3 != '' && (nkq3 == nkq2)) || (nkq1 != '' && (nkq3 == nkq1))|| (prq1 != 'http:/' && prq2 != 'http:/' && prq3 != 'http:/')){
+			$('#nkqfehler').show();
+		}
+		else{ qfehler = false; $('#nkqfehler').hide();}
+		
+		if(nfehler == false && qfehler == false){
+			var kat = localStorage.getItem("kategorien");
+			kat = JSON.parse(kat);
+			var kats=new Array();
+			kats=kat.split("|");
+			var neuKats = '';
+			
+			var letzter = false;
+			
+			for(var a=0; a<kats.length; a++){
+				if(nkname == kats[a]){
+					letzter = true;
+					}
+			}
+			
+		if(letzter == true){
+				alert('Der Name '+nkname+' ist schon vergeben! Bitte wählen Sie einen anderen.');
+				}
+		else{
+			if ($('input[name="nkstart"]').is(":checked")) {
+				neuKats = nkname;
+				for(var i = 0; i<kats.length; i++){
+					neuKats += '|'+kats[i];
+				}
+			}
+			else{
+				for(var i = 0; i<kats.length; i++){
+					neuKats += kats[i]+'|';
+				}
+				neuKats += nkname;
+			}
+			localStorage.setItem("kategorien", JSON.stringify(neuKats));
+			
+			var neuequel = '';
+			
+			var zaehler = 7;
+			var za = 0;
+			if(prq1 == 'http:/'){
+				za = 1;
+				zaehler ++;}
+			if(prq2 == 'http:/'){
+				za = 3;
+				zaehler ++;}
+			if(prq3 == 'http:/'){
+				za = 5;
+				zaehler ++;}
+				
+			if(za == 1 && zaehler == 8){
+				neuequel = nkq1;}
+			
+			if(za == 3 && zaehler == 8){
+				neuequel = nkq2;}
+				
+			if(za == 5 && zaehler == 8){
+				neuequel = nkq3;}
+			
+			if(za == 3 && zaehler == 9){
+				neuequel = nkq1+'|'+nkq2;}
+			
+			if(za == 5 && zaehler == 9){
+				neuequel = nkq2+'|'+nkq3;}
+			
+			if(za == 5 && zaehler == 10){
+				neuequel = nkq1+'|'+nkq2+'|'+nkq3;}
+			
+			localStorage.setItem(nkname, JSON.stringify(neuequel));
+		 
+			
+			$('input[name="nkname"]').val("");
+			$('input[name="nkq1"]').val("");
+			$('input[name="nkq2"]').val("");
+			$('input[name="nkq3"]').val("");
+			
+			backButton('#start');
+			selectKats();
+			OnLoad();
+			}
+		}
+	}
+	
+	//URL für Quelle in neuer Kategorie suchen
+	
+	$('.nksuche').click(function(){
+		var suchButton = $(this).attr("name");
+
+		if(suchButton == 's1'){
+			$('input[name="nkq1"]').val('hier');
+		}
+		if(suchButton == 's2'){
+			$('input[name="nkq2"]').val('hier');
+		}
+		if(suchButton == 's3'){
+			$('input[name="nkq3"]').val('hier');
+		}
+		backButton('#suche');
+	});
+	
+	function urlGefunden(url){ 
+		
+		var inputnkq1 = $('input[name="nkq1"]').val();
+		var inputnkq2 = $('input[name="nkq2"]').val();
+		var inputnkq3 = $('input[name="nkq3"]').val();
+		
+		var pruefen = false;
+		
+		if(inputnkq1 == 'hier'){
+			$('input[name="nkq1"]').val(url);
+			}
+		if(inputnkq2 == 'hier'){
+			$('input[name="nkq2"]').val(url);
+			}
+		if(inputnkq3 == 'hier'){
+				$('input[name="nkq3"]').val(url);
+			}
+		
+		backButton('#neue');
+	}
+	
+	// Artikel speichern
+	function artSpeicher(artikelid){
+		var id ='#'+artikelid;
+		var zuspeichern = $(id).find('.content').html();
+		
+		var arttitel = $(id).find('.titel').text();
+		var artueber = $(id).find('.artueber').html();
+		var artdatum = $(id).find('.artdate').html();
+		
+		var artshort = arttitel+'|'+artueber+'|'+artdatum;
+		var arttester = false;
+		
+		for( var a=0; a<20;a++){
+			var artkey = "Artikel"+a;
+			var shortkey = "Short|"+a;
+			if(!localStorage.getItem(artkey)){
+				localStorage.setItem(shortkey,JSON.stringify(artshort)); 
+				localStorage.setItem(artkey, JSON.stringify(zuspeichern));
+				arttester = true;
+				$(id).find('.buttonrechts').html('<img alt="gespeichert" src="icons/gemerkt.png">');
+				$('#artgesp').show().delay(500).fadeOut(500);
+				//$('#artgesp').fadeOut(1000);
+				break;
+			}
+		}
+		
+		if(arttester == false){
+			alert('Sie können keine weiteren Artikel speichern! Die maximale Anzahl gespeicherter Artikel ist 10.');
+			}
+		artLaden();
+		
+	}
+	//Gespeicherte Artikel laden
+	
+	function artLaden(){
+			
+		var artliste = '';
+		var artleer = true;
+		
+		for( var a=0; a<20;a++){
+			var shortkey = "Short|"+a;
+			
+			var artvor = false;
+			
+			if(!localStorage.getItem(shortkey)){
+				artvor = false;
+			}
+			else{
+				artvor = true;
+			}
+			
+			if(artvor == true){
+				var ausSpeicher = JSON.parse(localStorage.getItem(shortkey));
+				var ausSpeicher = ausSpeicher.split('|');
+				
+				artliste +='<div class="artikelliste"><a href="javascript:artLesen('+"'"+a+"'"+');"><div class="feed">'+ausSpeicher[0]+'</div><div class="datum">'+ausSpeicher[2]+'</div><div class="uber">'+ausSpeicher[1]+'</div></a></div>';
+				
+				artleer = false;
+			}
+			
+		}
+
+		if(artleer == true){
+			artliste = 'Keine gespeicherten Artikel';
+		}
+		var container = $("#meine");
+		container.find('.content').html(artliste);
+	
+	}
+	
+	//Gespeicherte Artikel lesen
+	
+	function artLesen(artNr){
+		var artkey = "Artikel"+artNr;
+		var shortkey = "Short|"+artNr;
+		
+		var artTitel = JSON.parse(localStorage.getItem(shortkey));
+		artTitel = artTitel.split('|');
+		
+		var inhalt = $("#lesen");
+		
+		var artInhalt = JSON.parse(localStorage.getItem(artkey));
+		
+		var linkloesch = '<a class="aloesch buttonrechts" href="javascript:artLoesch('+"'"+artNr+"'"+');"><img src="icons/merkenloesch.png" alt="Löschen" /></a>';
+		$("#lesen").find('.titel').html(artTitel[0]);
+		inhalt.find('.content').html(artInhalt);
+		inhalt.find('.aloesch').remove();
+		inhalt.find('.topbar').append(linkloesch);
+		
+		backButton('#lesen');
+	}
+	
+	//Gespeicherte Artikel löschen
+	
+	function artLoesch(nrArt){
+		var sicher = confirm('Wollen Sie diesen Artikel wirklich aus "Meine Artikel" löschen?');
+		
+		if(sicher){
+			var artkey = "Artikel"+nrArt;
+			var shortkey = "Short|"+nrArt;
+			
+			localStorage.removeItem(artkey);
+			localStorage.removeItem(shortkey);
+			
+			backButton('#meine');
+			
+			artLaden();
+		}
+	}
+	
+	// Neu laden beim ändern der aktuelle gewählten Kategorie
+	$("#optionen").change(function(){$('#gewaehlt').text($("#optionen option:selected").text()); OnLoad();});	
+	
+	 
+	// Navigation für App - inkl. Browser-Navigation
+	
+	$('a[href*="#"]').click(function(event) {
+		var divId = $(this).attr("href");
+		backButton(divId);
+	});
+	
+	window.onhashchange = einTest;
+	
+	function einTest(){ 
+		var divId= location.hash;
+		if(divId == ""){divId = "#start";}
+		backButton(divId);
+	}
+	
+	/*function backButton(derLink){
+		var parentDiv = $('div[class*="aktiv"]').attr("id");
+		if(("#"+parentDiv) != derLink){
+		$("#"+parentDiv).removeClass("aktiv");
+		$(derLink).toggle();
+		$("#"+parentDiv).toggle();
+		$(derLink).addClass("aktiv");
+		location.hash = derLink;
+		return true;}
+		else{return false;}
+	}*/
+	
+	//Lösung für Jumpbug Android 2.2 2.3
+	$('input').focusin(function(){
+		setTimeout(function(){
+    // Hide the address bar!
+    window.scrollTo(0, 1);
+  }, 0);
+		var testing = false;
+		var ids = $(this).attr("id");
+		if(ids == 'check' || ids == 'fertig' || ids == 'quelsuche'){
+			testing = true;
+		}
+
+		//$('#neue').addClass("jumpbug");
+		
+
+		if(testing == false && !$('html').hasClass("jumpbug")){
+		$('html').addClass("jumpbug");
+		$('body').addClass("jumpbug");
+		}
+
+	});
+	
+	$('input').focusout(function(){
+		jumpBug();
+	});
+	
+	function jumpBug(){
+		//$('#neue').removeClass("jumpbug");
+		if($('html').hasClass("jumpbug")){
+			$('html').removeClass("jumpbug");
+			$('body').removeClass("jumpbug");
+		}
+	}
+		
+	function bleedBug(){
+		if($('#start').hasClass('aktiv')){
+			$("#optionen").removeAttr('disabled');
+		}
+		else{
+			$("#optionen").attr('disabled', 'disabled');
+		}
+	}
+	//Zurückbutton mit JumpBug und SelectBug Work-A-Round
+	function backButton(derLink){
+		var parentDiv = $('div[class*="aktiv"]').attr("id");
+		if(("#"+parentDiv) != derLink){
+		
+			var testAufStartP = '#'+parentDiv;
+			
+			if(testAufStartP == '#start'){
+				$("#"+parentDiv).removeClass("aktiv");
+				$(derLink).toggle();
+				$(derLink).addClass("aktiv");
+				}
+				
+			if(derLink == '#start'){
+				$("#"+parentDiv).removeClass("aktiv");
+				$("#"+parentDiv).toggle();
+				$(derLink).addClass("aktiv");
+				}
+			
+			if(derLink != '#start' && testAufStartP != '#start'){
+				$("#"+parentDiv).removeClass("aktiv");
+				$(derLink).toggle();
+				$("#"+parentDiv).toggle();
+				$(derLink).addClass("aktiv");
+				}
+			bleedBug();
+			jumpBug();
+			location.hash = derLink;
+			return true;}
+		else{return false;}
+	}
+
+	// Artikel Slider with jQuery
+	//scrollTo(0,0);
+
+	$('#quel0').Swipe({callback: function(){
+		var aktuellePos ='#0pos'+slider0.getPos();
+		var sliderNr = 0;
+		aktuPos(aktuellePos, sliderNr);
+		}});
+	window.slider0 = $('#quel0').data('Swipe');
+	
+	$('#quel1').Swipe({callback: function(){
+		var aktuellePos ='#1pos'+slider1.getPos();
+		var sliderNr = 1;
+		aktuPos(aktuellePos, sliderNr);
+		}});
+	window.slider1 = $('#quel1').data('Swipe');
+	
+	
+	$('#quel2').Swipe({callback: function(){
+		var aktuellePos ='#2pos'+slider2.getPos();
+		var sliderNr = 2;
+		aktuPos(aktuellePos, sliderNr);
+		}});
+	window.slider2 = $('#quel2').data('Swipe');
+	
+	function aktuPos(posi, slider){
+		$('#'+slider+'pos0').removeClass("on");
+		$('#'+slider+'pos1').removeClass("on");
+		$('#'+slider+'pos2').removeClass("on");
+		$(posi).addClass("on");
+		}
+///*Für Localhost auskommentiert!!!!	
+
+
+	//How to load a feed via the Feeds API.
+         
+	google.load("feeds", "1");
+	
+	// Our callback function, for when a feed is loaded.
+	function einsLoaded(result) {
+		if (!result.error) {
+		var quelNr = 0;
+		var entry = '';
+		var titel ='';
+		var laenge = result.feed.entries.length;
+		
+		for (var i = 0; i < laenge; i++){
+			entry = result.feed.entries[i];
+			titel = result.feed.title;
+			artikelAusgabe(quelNr, entry, i, titel, laenge);
+		}
+		}
+		else{
+			var quelNr = 0;
+			artikelFehler(quelNr);
+		}
+	}
+	
+	function zweiLoaded(result) {
+		if (!result.error) {
+	
+		var quelNr = 1;
+		var entry = '';
+		var titel ='';
+		var laenge = result.feed.entries.length;
+		
+		for (var i = 0; i < laenge; i++){
+			entry = result.feed.entries[i];
+			titel = result.feed.title;
+			artikelAusgabe(quelNr, entry, i, titel, laenge);
+			}
+		}
+		else{
+			var quelNr = 1;
+			artikelFehler(quelNr);
+		}
+	}
+	
+	function dreiLoaded(result) {
+		if (!result.error) {
+			
+			var quelNr = 2;
+			var entry = '';
+			var titel ='';
+			var laenge = result.feed.entries.length;
+		
+			for (var i = 0; i < laenge; i++){
+				entry = result.feed.entries[i];
+				titel = result.feed.title;
+				artikelAusgabe(quelNr, entry, i, titel, laenge);
+			}
+		}
+		else{
+			var quelNr = 2;
+			artikelFehler(quelNr);
+		}
+	}
+	
+	function artikelAusgabe(quelNr, entry, i, titel, laenge){
+		var id = 'artikel'+quelNr+(i+1);
+		var container = document.getElementById(id);
+		var html = '';
+		
+		var date = new Date(entry.publishedDate);
+		if (entry.publishedDate == ''){
+			date ='Unbekannt'}
+		else{
+			var monthNames =[ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12' ];
+			
+			var minutentest = date.getMinutes();
+			var minuten = '';
+			if(minutentest <10){ minuten = '0'+ minutentest;}
+			else{ minuten = minutentest;}
+			
+			var tagTest = date.getDate();
+			var tag = '';
+			if(tagTest <10){ tag = '0'+ tagTest;}
+			else{ tag = tagTest;}
+			
+			date = tag+'.'+ monthNames[ date.getMonth() ] + ' | '+ date.getHours() + ':'+ minuten;
+			}
+		html = '<div class="feed">'+titel+'</div><div class="datum"> '+ date+'</div><div class="uber">'+ entry.title +'</div><div>'+entry.contentSnippet+'</div>';
+		if(laenge<3){
+			var id2 = 'artikel'+quelNr+2;
+			var id3 = 'artikel'+quelNr+3;
+			var artid2 ='art'+quelNr+2;
+			var artid3 ='art'+quelNr+3;
+			var container2 = document.getElementById(id2);
+			var container3 = document.getElementById(id3);
+			var container4 = document.getElementById(artid2);
+			var container5 = document.getElementById(artid3);
+			container2.innerHTML = container3.innerHTML = "Keine weiteren Artikel verfügbar!";
+			container4.innerHTML = container5.innerHTML = '<div class="topbar"><a class="buttonleft" href="#start"><img src="icons/zurueck.png" alt="Zurück" /></a></div>';
+			}
+		container.innerHTML = html;
+		var artid = 'art'+quelNr+(i+1);
+		var artcontainer = document.getElementById(artid);
+		var ersetzp = entry.content;
+		//ersetzp = ersetzp.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '<br />')
+		var arthtml='<div class="topbar"><a class="buttonleft" href="#start"><img src="icons/zurueck.png" alt="Zurück" /></a><div class="titel">'+titel+'</div><a class="buttonrechts" href="javascript: artSpeicher('+"'"+artid+"'"+');"><img src="icons/merken.png" alt="Speichern" /></a></div>';
+			 arthtml +='<div class="content"><div class="artcontent"><div class="feed">'+titel+'</div><div class="artdate"> '+ date+'</div><div class="artueber">'+entry.title+'</div><div class="artinner">'+ersetzp+'</div></div><a href="'+entry.link+'"><div class="linkout">Zum original Artikel</div></a><br/></div>';
+		artcontainer.innerHTML = arthtml;
+		}
+	
+	function artikelFehler(quelNr){
+		var error1 = document.getElementById('artikel'+quelNr+'1');
+		var error2 = document.getElementById('artikel'+quelNr+'2');
+		var error3 = document.getElementById('artikel'+quelNr+'3');
+		var error11 = document.getElementById('art'+quelNr+'1');
+		var error22 = document.getElementById('art'+quelNr+'2');
+		var error33 = document.getElementById('art'+quelNr+'3');
+		error3.innerHTML = error2.innerHTML = error1.innerHTML = "Quelle kann nicht geladen werden";
+		error33.innerHTML = error22.innerHTML = error11.innerHTML = '<div class="topbar"><a class="buttonleft" href="#start"><img src="icons/zurueck.png" alt="Zurück" /></a></div>';
+	}
+	
+	function OnLoad() {
+	
+		var kat = localStorage.getItem("kategorien");
+		kat = JSON.parse(kat);
+		var kats=new Array();
+		kats=kat.split("|");
+		var aktuelleKat = kats[0];
+		
+		for(var i = 0; i<kats.length; i++){
+			if($('#gewaehlt').text() == kats[i]){
+					aktuelleKat = kats[i];
+					}
+		}
+		
+		var dieUrls = localStorage.getItem(aktuelleKat);
+		dieUrls = JSON.parse(dieUrls);
+		var urls=new Array();
+		urls=dieUrls.split("|");
+		
+		// Create a feed instance that will grab a feed.
+		var feedeins = new google.feeds.Feed(urls[0]);
+		feedeins.setNumEntries(3);
+		
+		var feedzwei = new google.feeds.Feed(urls[1]);
+		feedzwei.setNumEntries(3);
+		
+		var feeddrei = new google.feeds.Feed(urls[2]);
+		feeddrei.setNumEntries(3);
+		
+		  // Calling load sends the request off.  It requires a callback function.
+		feedeins.load(einsLoaded);
+		feedzwei.load(zweiLoaded);
+		feeddrei.load(dreiLoaded);
+	}
+	
+	google.setOnLoadCallback(OnLoad);
+	
+//Suche - via Google	
+	function findLoad() {
+		var such = document.getElementById('sucheinp');
+		jumpBug();
+		if(such.value != ''){
+		query = such.value;
+		google.feeds.findFeeds(query, findDone);
+		$('#ergebnisse').html('<br/><div><img src="icons/suche.gif" alt="Suche..." ></div><br/>');
+		}
+	}
+
+	function findDone(result) {
+		if (!result.error) {
+			var such = document.getElementById('sucheinp');
+			var content = document.getElementById('ergebnisse');
+			var html = '<br/><div> Ihr Suchbegriff war: <span>'+such.value+'</span></div><br/>';
+			
+			for (var i = 0; i < result.entries.length; i++) {
+			var entry = result.entries[i];
+			html += '<a href="javascript: urlGefunden(' +"'"+ entry.url + "'"+');"><div>' + entry.title + ' <span> -- als Quelle</span></div></a><br/>';
+			}
+			content.innerHTML = html;
+			such.value = "";
+		}
+		else{
+		var content = document.getElementById('ergebnisse');
+		content.innerHTML = 'Ein Fehler ist aufgetreten!';
+		}
+	}
+	        
+	google.setOnLoadCallback(findLoad);
+// */
