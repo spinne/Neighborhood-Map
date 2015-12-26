@@ -5,35 +5,35 @@
 // Array with 5 basic locations and infos
 var myNeighborhood = [
 	{
-		name: 'Kriminalmuseum, Rothenburg ob der Tauber',
+		name: 'Kriminalmuseum',
 		description: 'If medival torture is for you, this is the place to visit.',
 		category: 'Museum, Indoor',
 		lat: '49.3755982',
 		lng: '10.179146899999978'
 	},
 	{
-		name: 'Molkerei, Rothenburg ob der Tauber',
+		name: 'Molkerei',
 		description: 'A nice bar and restaurant with occational live music.',
 		category: 'Restaurant, Bar, Food, Music, Indoor',
 		lat: '49.3808427', 
 		lng: '10.188578300000017'
 	},
 	{
-		name: 'Reiterlesmarkt, Rothenburg ob der Tauber',
+		name: 'Reiterlesmarkt',
 		description: 'Food, drink and Christmas: The famous Christmas market held every december.',
 		category: 'Event, Food, Outdoor',
 		lat: '49.3768724',
 		lng: '10.17927510000004'
 	},
 	{
-		name: 'Lotus-Garten, Rothenburg ob der Tauber',
+		name: 'Lotus-Garten',
 		description: 'A tranquil south-east asian garden with café in the middle of Europe.',
 		category: 'Restaurant, Food, Outdoor',
 		lat: '49.3677609',
 		lng: '10.200424399999974'
 	},
 	{
-		name:'Burggarten, Rothenburg ob der Tauber',
+		name:'Burggarten',
 		description: 'The place where the castle used to be is now the city park with beautiful views of the old city.',
 		category: 'Park, Outdoor, Landmark',
 		lat: '49.3762149', 
@@ -44,80 +44,94 @@ var myNeighborhood = [
 
 var manageData = {
 	init: function () {
-		var self = this;
-		var data = myNeighborhood[4];
-		self.getFoursquare(data);
+		this.setCurrent();
+	},
+	
+	setCurrent: function() {
+		var current;
+		for (var i = 0; i < 5; i++){
+			current = myNeighborhood[i];
+			//current.foursq = this.getFoursquare(current);
+			current.mapMarker = this.getMarker(current);
+			//current.image = this.getStreetView(current);
+			var name = current.name;
+			//this.saveData(current, name);
+		}
+	},
+	
+	saveData: function(currentData, nameItem, type) {
+		/*if(!localStorage.getItem(nameItem)){
+			localStorage.setItem(nameItem, JSON.stringify(currentData));
+		} else {
+			var item = JSON.parse(localStorage.getItem(nameItem));
+			
+			if (type == 'marker') {
+				item.mapMarker = currentData;
+				localStorage.setItem(nameItem, JSON.stringify(item));
+			} else if (type == 'foursq') {
+				item.foursq = currentData;
+				localStorage.setItem(nameItem, JSON.stringify(item));
+			} else if (type == 'street') {
+				item.street = currentData;
+				localStorage.setItem(nameItem, JSON.stringify(item));
+			} else {
+				console.log('Failed Storage');
+			}
+		}*/
+	},
+	
+	getData: function(){
+		localStorage.clear();
 	},
 	
 	getFoursquare: function (locData){
-		var shortName = locData.name.split(',');
-		var fsqQuery = 'https://api.foursquare.com/v2/venues/search' +
+		var fsqQuery = 'https://api.foursquare.com/v2/venues/searchz' +
 			'?client_id=' + 'OYNXUBHDOXCBUDHXT5D1O14S3K2T1YHRCPA0VF3ZMUUF0DLE' +
 			'&client_secret=' + 'A5TEMADYGHZE0A0H2X3WEF0G0VKPPHYIRDUAXS3CZBDA2WON' +
 			'&v=20130815' +
 			'&intent=match' +
 			'&ll=' + locData.lat + ',' + locData.lng +
-			'&query=' + shortName[0];
+			'&query=' + locData.name;
 		
-		console.log(fsqQuery);
+		//console.log(fsqQuery);
 		
 		$.getJSON(fsqQuery, function(data) {
 			var results = data.response.venues;
-			console.log(results);
-
-		// $.each( articles, function( key, val ) {
-			// }
-		// });
+			//console.log(results);
+			//return results;
 		}).fail(function() {
+			console.log('upps');
 		});
+
 	},
 	
 	getStreetView: function (locData) {
 		var url = 'https://maps.googleapis.com/maps/api/streetview?' + 
 		'size=300x300&location=' + locData.lat + ',' + locData.lng + 
 		'&heading=151.78&pitch=-0.76';
+		return url;
+	},
+	
+	getMarker: function (locData) {
+		var marker = new Marker (map, locData);
+		return marker;
 	}
+	
 };
 
-/*
-var manageData = function() {
-	this.testing = myNeighborhood[0];
-
-	this.getFoursquare = function(locData) {
-		var fsqQuery = 'https://api.foursquare.com/v2/venues/search' +
-			'?client_id=' + 'OYNXUBHDOXCBUDHXT5D1O14S3K2T1YHRCPA0VF3ZMUUF0DLE' +
-			'&client_secret=' + 'A5TEMADYGHZE0A0H2X3WEF0G0VKPPHYIRDUAXS3CZBDA2WON' +
-			'&ll=' + locData.lat + ',' + locData.lng +
-			'&query=' + locData.name;
-		
-		console.log(fsqQuery);
-	
-		$.getJSON( nytQuery, function( data ) {	
-
-		$.each( articles, function( key, val ) {
-			}
-		});
-		}).error(function() {
-		});
-	}
-
-	this.getWiki = function() {
-		console.log(myNeighborhood[1]);
-	}
-	//getFoursquare(myNeighborhood[0]);
-	
-	console.log(myNeighborhood[1]);
-	
-}
-*/
 
 /*### ViewModels ###*/
+//
+var map;
 
 // Class for map markers
-var Marker = function(map, name, lat, lng) {
+var Marker = function(map, currentData) {
 	var marker;
+	var name = currentData.name;
+	var dataLat = currentData.lat;
+	var dataLng = currentData.lng;
 	
-	var location = '(' + lat + ',' + lng +')';
+	var location = new google.maps.LatLng(dataLat,dataLng);
 	
 	this.name = ko.observable(name);
 	this.position  = ko.observable(location);
@@ -126,14 +140,36 @@ var Marker = function(map, name, lat, lng) {
 			map: map,
 			position: location,
 			title: name
+			
+	});
+	
+	var contentString = name + '<br>' +
+		currentData.description;
+	
+	marker.infowin = new google.maps.InfoWindow({
+		content: contentString
+	});
+	
+	marker.handleClick = function() {
+		marker.infowin.open(map, marker);
+		marker.setAnimation(google.maps.Animation.BOUNCE);
+		setTimeout(function () {
+			marker.setAnimation(null);
+			}, 1400);
+	}
+	
+	marker.addListener('click', function() {
+		marker.handleClick();
 	});
 }
 
+
+// Google Maps
 var initMap = function() {
 	var self = this;
 	
 	// Fill the map object and select the map div for display.
-	var map = new google.maps.Map(document.getElementById('map'));
+	map = new google.maps.Map(document.getElementById('map'));
 	
 	// Make the map fit the height of the screen
 	self.scaleMap = function() {
@@ -169,7 +205,7 @@ $(window).resize(function() {
 	resizeMap();
 });
 
-/*
+
 //Search and List
 var viewModel = function() {
 	var self = this;
@@ -180,9 +216,24 @@ var viewModel = function() {
 
 	myNeighborhood.forEach(function(place){
 		self.locationList.push(place);
-		var marker = new Marker(map, place.name, place.lat, place.lng);
-		self.markerList.push(marker);
+		//var marker = new Marker(map, place.name, place.lat, place.lng);
 	});
+	
+	self.markerMove = function(name) {
+		
+	}
+	
+	self.clearStorage = function() {
+		localStorage.clear();
+	}
+	
+	self.showStorage = function() {
+		var length = localStorage.length;
+		
+		for (var i = 0; i < length; i++) {
+				console.log(localStorage.getItem(localStorage.key(i)));
+		}
+	}
 	
 	// Search Function
 	self.search = function() {
@@ -202,5 +253,7 @@ var viewModel = function() {
 	}
 }
 
-ko.applyBindings(new viewModel());
-*/
+//Delay Knockout bindings
+$(window).ready(function () {
+	ko.applyBindings(new viewModel());
+});
