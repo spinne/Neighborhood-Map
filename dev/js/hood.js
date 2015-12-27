@@ -53,35 +53,10 @@ var manageData = {
 			current = myNeighborhood[i];
 			//current.foursq = this.getFoursquare(current);
 			current.mapMarker = this.getMarker(current);
-			//current.image = this.getStreetView(current);
-			var name = current.name;
+			current.image = this.getStreetView(current);
+			//var name = current.name;
 			//this.saveData(current, name);
 		}
-	},
-	
-	saveData: function(currentData, nameItem, type) {
-		/*if(!localStorage.getItem(nameItem)){
-			localStorage.setItem(nameItem, JSON.stringify(currentData));
-		} else {
-			var item = JSON.parse(localStorage.getItem(nameItem));
-			
-			if (type == 'marker') {
-				item.mapMarker = currentData;
-				localStorage.setItem(nameItem, JSON.stringify(item));
-			} else if (type == 'foursq') {
-				item.foursq = currentData;
-				localStorage.setItem(nameItem, JSON.stringify(item));
-			} else if (type == 'street') {
-				item.street = currentData;
-				localStorage.setItem(nameItem, JSON.stringify(item));
-			} else {
-				console.log('Failed Storage');
-			}
-		}*/
-	},
-	
-	getData: function(){
-		localStorage.clear();
 	},
 	
 	getFoursquare: function (locData){
@@ -140,7 +115,6 @@ var Marker = function(map, currentData) {
 			map: map,
 			position: location,
 			title: name
-			
 	});
 	
 	var contentString = name + '<br>' +
