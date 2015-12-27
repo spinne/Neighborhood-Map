@@ -42,19 +42,19 @@ var manageData = {
 		}
 	],
 	
-	mapMarker: [],
-	
 	init: function() {
 		
 	},
 	
 	createMarker: function() {
+		var mapMarker =[];
+		
 		this.myNeighborhood.forEach(function(location) {
 			var marker = new Marker(map, location);
-			manageData.mapMarker.push(marker);
+			mapMarker.push(marker);
 		});
 		
-		vm.markerList = manageData.mapMarker;
+		vm.markerList(mapMarker);
 	}
 }
 
@@ -150,20 +150,20 @@ var viewModel = function() {
 	self.locationList = ko.observableArray([]);
 	self.markerList = ko.observableArray([]);
 	self.query = ko.observable('');
-	self.offlineFallback = ko.observable();
+	self.offlineFallback = ko.observable(false);
 
 	manageData.myNeighborhood.forEach(function(place){
 		self.locationList.push(place);
 	});
 	
 	self.markerMove = function(listItem) {
-		var length = self.markerList.length;
+		var length = self.markerList().length;
 		
 		for (var i = 0; i < length; i++){
-			if(self.markerList[i].title === listItem.name) {
-				self.markerList[i].handleClick();
+			if(self.markerList()[i].title === listItem.name) {
+				self.markerList()[i].handleClick();
 			} else {
-				self.markerList[i].infowin.close();
+				self.markerList()[i].infowin.close();
 			}
 		}
 	}
@@ -172,16 +172,29 @@ var viewModel = function() {
 	// Search Function
 	self.search = function() {
 		// remove all the locations
-		self.locationList.removeAll();
+		var removedArray = self.locationList.removeAll();
+		
+		//Used for setting marker visiblity
+		var nameObject = {};
 		
 		// Trim spaces from the search and turn to lower case
 		var searchTerm = self.query().trim().toLowerCase();
 
 		// then push only the matching locations back into the array
-		manageData.myNeighborhood.forEach(function(x){
+		manageData.myNeighborhood.forEach(function(item){
 			// search by name or by category 
-			if(x.name.toLowerCase().indexOf(searchTerm) >= 0 || x.category.toLowerCase().indexOf(searchTerm) >= 0) {
-				self.locationList.push(x);
+			if(item.name.toLowerCase().indexOf(searchTerm) >= 0 || item.category.toLowerCase().indexOf(searchTerm) >= 0) {
+				self.locationList.push(item);
+				nameObject[item.name] = '';
+			}
+		});
+		
+		//Set marker visibility - see if marker.title is a key in nameObject
+		self.markerList().forEach(function(marker) {
+			if (marker.title in nameObject){
+				marker.setVisible(true);
+			} else {
+				marker.setVisible(false);
 			}
 		});
 	}
