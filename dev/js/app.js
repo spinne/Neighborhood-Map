@@ -2,8 +2,8 @@
 
 /*### Model ###*/
 
-// Array with 5 basic locations and infos
 var manageData = {
+	// Array with 5 basic locations and infos
 	myNeighborhood: [
 		{
 			name: 'Kriminalmuseum',
@@ -42,12 +42,14 @@ var manageData = {
 		}
 	],
 	
+	currentMarker: [] ,
+	
 	init: function() {
 		
 	},
 	
 	updateInfoWindow: function (marker) {
-		console.log(marker.infowin.content);
+		//console.log(marker.infowin.content);
 		this.getFoursquare(marker);
 	},
 	
@@ -71,7 +73,7 @@ var manageData = {
 			localStorage.removeItem('time');
 			localStorage.removeItem(name);
 			localStorage.setItem('time', JSON.stringify(currentTime));
-			localStorage.setItem(.name, JSON.stringify(data));
+			localStorage.setItem(name, JSON.stringify(data));
 		}
 	},
 	
@@ -90,18 +92,11 @@ var manageData = {
 		
 		$.getJSON(fsqQuery, function(data) {
 			var results = data.response.venues;
-			
-			manageData.saveData(results[0]);
+			console.log(results[0]);
+			//manageData.saveData(results[0]);
 		}).fail(function() {
 			console.log('upps');
 		});
-	},
-
-	getStreetView: function (locData) {
-		var url = 'https://maps.googleapis.com/maps/api/streetview?' + 
-		'size=300x300&location=' + locData.lat + ',' + locData.lng + 
-		'&heading=151.78&pitch=-0.76';
-		return url;
 	},
 	
 	createMarker: function() {
@@ -150,7 +145,7 @@ var Marker = function(map, currentData) {
 			marker.setAnimation(null);
 			}, 1400);
 			
-		marker.infowin.setContent('hey');
+		marker.infowin.setContent('Loading...');
 		manageData.updateInfoWindow(marker);
 	};
 	
@@ -158,8 +153,6 @@ var Marker = function(map, currentData) {
 	marker.addListener('click', function() {
 		marker.handleClick();
 	});
-	
-	console.log(marker.lat);
 	
 	return marker;
 };
@@ -268,8 +261,8 @@ var viewModel = function() {
 			if (marker.title in nameObject){
 				marker.setVisible(true);
 			} else {
-				marker.setVisible(false);
 				marker.infowin.close();
+				marker.setVisible(false);
 			}
 		});
 	};
