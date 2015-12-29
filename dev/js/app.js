@@ -113,6 +113,7 @@ var manageData = {
 };
 
 
+
 // Class for map markers
 var Marker = function(map, currentData) {
 	var marker;
