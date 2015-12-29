@@ -53,7 +53,8 @@ var manageData = {
 		this.myNeighborhood.forEach(function(location) {
 			var newLocation = new Location(location);
 			manageData.locationsArray.push(newLocation);
-			manageData.getFoursquare(newLocation);
+			//manageData.getFoursquare(newLocation);
+			manageData.getData(newLocation.name(), newLocation);
 		});
 		return this.locationsArray;
 	},
@@ -66,17 +67,17 @@ var manageData = {
 		
 		// Check if foursquare api worked or if data could be retrieved from localStorage
 		if (location.foursqFail === true && location.foursqID() == '') {
-			warn = '<div class="warning">Sorry! Failed to load Foursquare. Try refresh.<div>';
+			warn = '<div class="warning">Sorry! Failed to load Foursquare. Try refresh.</div>';
 		} else if (location.foursqFail === true) {
-			warn = '<div class="warning">Sorry! Failed to load Foursquare - data could be outdated.<div>';
+			warn = '<div class="warning">Sorry! Failed to load Foursquare - data could be outdated.</div>';
 		} 
 		
 		//Check foursquare results
 		if (location.stats() != '') {
 			conditional = conditional +
-				'<div class="infoFsq"><h2 class="infoHead">'+
-				'<a class="infoLink" target="_blank" href="https://foursquare.com/v/' + location.foursqID() + '">Foursquare</a>'+
-				'</h2><ul class="infoStats">'+
+				'<div class="info-fsq"><h2 class="info-head">'+
+				'<a class="info-link" target="_blank" href="https://foursquare.com/v/' + location.foursqID() + '">Foursquare</a>'+
+				'</h2><ul class="info-stats">'+
 				'<li> Checkins: ' + location.stats().checkinsCount + '</li>' +
 				'<li> Users: ' + location.stats().usersCount + '</li>' +
 				'<li> Tips: ' + location.stats().tipCount + '</li>' +
@@ -85,26 +86,26 @@ var manageData = {
 		
 		if (location.address().hasOwnProperty('address')) {
 			conditional = conditional +
-				'<div class="infoCon">' + location.address().address + ' | Rothenburg/Tauber' +
+				'<div class="info-contact">' + location.address().address + ' | Rothenburg/Tauber' +
 				'</div>';
 		}
 		
 		if (location.url() != '') {
 			conditional = conditional +
-			'<a class="infoLink" target="_blank" href="' + location.url() + '">' + location.name() + ' Website</a>';
+			'<a class="info-link info-contact" target="_blank" href="' + location.url() + '">' + location.name() + ' Website</a>';
 		}
 		
 		// Assemble contentString
 		contentString = warn +
-			'<div class="infoDiv">' + location.description() + '</div>' +
+			'<div class="info-description">' + location.description() + '</div>' +
 			conditional +
-			'<div class="infoDiv"> Latitude: ' + location.lat() + 
+			'<div class="info-div"> Latitude: ' + location.lat() + 
 			' | Longitude:' + location.lng() + '</div>' +
-			'<div class="infoDiv"> Category: ' + location.category() + '</div>';
+			'<div class="info-div"> Category: ' + location.category() + '</div>';
 		
 		//If google maps works add headline and setContent - else return string without headline
 		if (manageData.googleMap === false) {
-			var contentStr = '<h2 class="infoHead">' + location.name() + '</h2>' + contentString;
+			var contentStr = '<h2 class="info-head">' + location.name() + '</h2>' + contentString;
 			location.marker().infowin.setContent(contentStr);
 		} else {
 			return contentString;
@@ -161,9 +162,8 @@ var manageData = {
 	},
 	
 	// Call foursquare api for infos on location
-	// #### !!!! Messed up url! !!!!####
 	getFoursquare: function (locData){
-		var fsqQuery = 'https://5api.foursquare.com/v2/venues/search' +
+		var fsqQuery = 'https://api.foursquare.com/v2/venues/search' +
 			'?client_id=' + 'OYNXUBHDOXCBUDHXT5D1O14S3K2T1YHRCPA0VF3ZMUUF0DLE' +
 			'&client_secret=' + 'A5TEMADYGHZE0A0H2X3WEF0G0VKPPHYIRDUAXS3CZBDA2WON' +
 			'&v=20130815' +
@@ -201,7 +201,6 @@ var manageData = {
 			
 			// Check if foursquare took longer than google maps
 			if(!$.isEmptyObject(locData.marker())) {
-				console.log(locData.name());
 				manageData.updateInfoWindow(locData);
 			}
 			
@@ -297,8 +296,8 @@ var initMap = function() {
 	
 	// Make the map fit the height of the screen with 1% margin
 	self.scaleMap = function() {
-		//Calculate and set the height of the map element
-		var mapHeight = ($(window).height() - $('header').outerHeight(true))*0.98;
+		//Calculate and set the height of the map element, dependend on window width
+		var mapHeight = ($(window).width() < 751) ? ($(window).height() - $('header').outerHeight(true))*0.98 : $(window).height();
 		$('#map').height(mapHeight);
 	};
 	
@@ -347,6 +346,7 @@ var viewModel = function() {
 	self.query = ko.observable('');
 	self.offlineFallback = ko.observable(false);
 	self.adminMode = ko.observable(false);
+	self.toggleMenu = ko.observable(false);
 	
 	// Save the locations in Array - no need to call model everytime for search.
 	self.completeList(manageData.init());
@@ -355,6 +355,11 @@ var viewModel = function() {
 	self.completeList().forEach(function(place){
 		self.locationList.push(place);
 	});
+	
+	// Toggle mobile menubar
+	self.showMenu = function () {
+		self.toggleMenu(!self.toggleMenu());
+	}
 	
 	// Open InfoWindow and bounce markers when a list item is clicked
 	self.markerMove = function(listItem) {

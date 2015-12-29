@@ -1,11 +1,55 @@
 body{
 	width: 100%;
-	height:100%;
+	height: 100%;
 	margin: 0;
+	font-family: 'Roboto', sans-serif;
+	color: #faba19;
 }
 
+/* Header */
 .header {
 	margin: 5px;
+}
+
+.nav {
+	padding: 5px;
+	background-color: rgba(55,55,55,0.85);
+}
+
+.fallback {
+
+}
+
+.location {
+	
+}
+
+.warning {
+	
+}
+
+.info-fsq {
+	
+}
+
+.info-link {
+	
+}
+
+.info-stats {
+	
+}
+
+.info-contact {
+	
+}
+
+.info-description {
+	
+}
+
+.info-div {
+	
 }
 
 .map {

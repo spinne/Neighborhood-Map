@@ -13,20 +13,19 @@
 	</head>
 	<body>
 		<header class="header">
-			Neighborhood-Map: Rothenburg / Tauber
+			<h1>Neighborhood-Map: Rothenburg / Tauber</h1>
+			<button class="mobile-menu" data-bind="click: showMenu">Menu</button>
 		</header>
-		<nav class="nav">
-			<form>
+		<nav class="nav" data-bind="visible: toggleMenu">
+			<form class="search">
 				<label> Search:
 					<input id="search" placeholder="" type="search" data-bind="textInput: query, event: {keyup: search}" ></input>
 				</label>
 			</form>
 			<ul id="list" class="list" data-bind="foreach: locationList">
-				<li class="location">
-					<h2 data-bind="text: name, click: $parent.markerMove"></h2>
-					<div data-bind="visible: $parent.offlineFallback">
-						<div data-bind="html: googleFail"></div>
-					</div>
+				<li class="location" data-bind="css: {fallback: $parent.offlineFallback}">
+					<h2 class=" info-head" data-bind="text: name, click: $parent.markerMove"></h2>
+					<div class="info" data-bind="visible: $parent.offlineFallback, html: googleFail"></div>
 				</li>
 			</ul>
 		</nav>
@@ -38,7 +37,7 @@
 		<script src="js/lib/jQuery-2.1.4.min.js"></script>
 		<script src="js/lib/knockout-3.4.0.min.js"></script>
 		<script src="js/hood.js"></script>
-		<script defer async src="https://4maps.googleapis.com/maps/api/js?libraries=places&callback=initMap" onerror="mapError()">
+		<script defer async src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap" onerror="mapError()">
 		</script>
 	</body>
 </html>
