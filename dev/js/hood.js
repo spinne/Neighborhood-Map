@@ -67,7 +67,7 @@ var manageData = {
 		// Check if foursquare api worked or if data could be retrieved from localStorage
 		if (location.foursqFail === true && location.foursqID() == '') {
 			warn = '<div class="warning">Sorry! Failed to load Foursquare. Try refresh.<div>';
-		} else if (location.foursqFail === true && location.foursqID() == '') {
+		} else if (location.foursqFail === true) {
 			warn = '<div class="warning">Sorry! Failed to load Foursquare - data could be outdated.<div>';
 		} 
 		
@@ -198,6 +198,12 @@ var manageData = {
 			}
 
 			manageData.saveData(forSave);
+			
+			// Check if foursquare took longer than google maps
+			if(!$.isEmptyObject(locData.marker())) {
+				console.log(locData.name());
+				manageData.updateInfoWindow(locData);
+			}
 			
 		}).fail(function() {
 			locData.foursqFail = true;

@@ -5,10 +5,14 @@ body{
 }
 
 .header {
-	margin: 10px;
+	margin: 5px;
 }
 
 .map {
 	margin: 1%;
 	width: 98%;
+	position: absolute;
+	bottom:0;
+	left: 0;
+	z-index:-1;
 }
