@@ -49,6 +49,7 @@ var manageData = {
 	googleMap: false,
 	
 	// Create and collect all data except google map and markers - called from viewModel
+	// --> Foursquare / getData !!!!
 	init: function() {
 		this.myNeighborhood.forEach(function(location) {
 			var newLocation = new Location(location);
@@ -67,9 +68,9 @@ var manageData = {
 		
 		// Check if foursquare api worked or if data could be retrieved from localStorage
 		if (location.foursqFail === true && location.foursqID() == '') {
-			warn = '<div class="warning">Sorry! Failed to load Foursquare. Try refresh.</div>';
+			warn = '<p class="warning">Sorry! Failed to load Foursquare. Try refresh.</p>';
 		} else if (location.foursqFail === true) {
-			warn = '<div class="warning">Sorry! Failed to load Foursquare - data could be outdated.</div>';
+			warn = '<p class="warning">Sorry! Failed to load Foursquare - data could be outdated.</p>';
 		} 
 		
 		//Check foursquare results
@@ -86,7 +87,7 @@ var manageData = {
 		
 		if (location.address().hasOwnProperty('address')) {
 			conditional = conditional +
-				'<div class="info-contact">' + location.address().address + ' | Rothenburg/Tauber' +
+				'<div class="info-contact">' + location.address().address + ' <br> Rothenburg / Tauber' +
 				'</div>';
 		}
 		
@@ -99,8 +100,8 @@ var manageData = {
 		contentString = warn +
 			'<div class="info-description">' + location.description() + '</div>' +
 			conditional +
-			'<div class="info-div"> Latitude: ' + location.lat() + 
-			' | Longitude:' + location.lng() + '</div>' +
+			'<div class="info-div"> Coordinates: ' + location.lat() + 
+			' | ' + location.lng() + '</div>' +
 			'<div class="info-div"> Category: ' + location.category() + '</div>';
 		
 		//If google maps works add headline and setContent - else return string without headline
@@ -159,11 +160,16 @@ var manageData = {
 				locData.address(retrieved.address);
 			}
 		}
+		
+		// Check if foursquare took longer than google maps
+		if(!$.isEmptyObject(locData.marker())) {
+			manageData.updateInfoWindow(locData);
+		}
 	},
 	
 	// Call foursquare api for infos on location
 	getFoursquare: function (locData){
-		var fsqQuery = 'https://api.foursquare.com/v2/venues/search' +
+		var fsqQuery = 'https://4api.foursquare.com/v2/venues/search' +
 			'?client_id=' + 'OYNXUBHDOXCBUDHXT5D1O14S3K2T1YHRCPA0VF3ZMUUF0DLE' +
 			'&client_secret=' + 'A5TEMADYGHZE0A0H2X3WEF0G0VKPPHYIRDUAXS3CZBDA2WON' +
 			'&v=20130815' +
@@ -229,6 +235,7 @@ var manageData = {
 };
 
 // Class for locations
+// foursquare --> true !!!!!
 var Location = function(location) {
 	this.name = ko.observable(location.name);
 	this.description = ko.observable(location.description);
@@ -241,7 +248,7 @@ var Location = function(location) {
 	this.stats = ko.observable('');
 	this.address = ko.observable('');
 	this.googleFail = ko.observable('');
-	this.foursqFail = '';
+	this.foursqFail = true;
 };
 
 
@@ -331,6 +338,7 @@ $(window).resize(function() {
 //
 var mapError = function(){
 	vm.offlineFallback(true);
+	vm.toggleMenu(true);
 	manageData.googleMap = true;
 	manageData.googleFail();
 };

@@ -3,33 +3,52 @@ body{
 	height: 100%;
 	margin: 0;
 	font-family: 'Roboto', sans-serif;
-	color: #faba19;
+	color: #373737;
 }
 
 /* Header */
 .header {
-	margin: 5px;
+	margin: 10px;
+	color: #faba19;
 }
 
+.name {
+	color: #373737;
+}
+
+.mobile-menu {
+	float: right;
+}
+
+/* Search & List*/
 .nav {
-	padding: 5px;
 	background-color: rgba(55,55,55,0.85);
 }
 
-.fallback {
-
+.fallback:nth-child(even) {
+	background-color: #fff;
 }
 
 .location {
-	
+
 }
 
 .warning {
-	
+	margin: 3px 0;
+	border: 1px solid red;
+	padding: 2px;
+	color: red;
+	font-size: 0.75em;
+}
+
+.info-head {
+	margin: 0 0 5px 0;
 }
 
 .info-fsq {
-	
+	margin: 0 0 5px 0;
+	width: 48%;
+	float: left;
 }
 
 .info-link {
@@ -41,22 +60,26 @@ body{
 }
 
 .info-contact {
-	
+	margin: 0 0 5px 0;
+	width: 48%;
+	float: left;
 }
 
 .info-description {
-	
+	margin: 10px 0;
 }
 
 .info-div {
-	
+	clear: both;
+	width: 100%;
+	font-size: 0.75em;
 }
 
 .map {
 	margin: 1%;
 	width: 98%;
 	position: absolute;
-	bottom:0;
+	bottom: 0;
 	left: 0;
 	z-index:-1;
 }
