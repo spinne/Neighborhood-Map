@@ -3,9 +3,9 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="description" content="Neighborhood Map Project">
+		<meta name="description" content="MyMap: Rothenburg / Tauber - Udacity FEND Neighborhood Map Project">
 		<meta name="author" content="Sylvia Schmidt">
-		<title>Neighborhood Map Project</title>
+		<title>MyMap: Rothenburg / Tauber (Neighborhood Map Project)</title>
 		
 		<!-- Added inline attribute to style.css for gulp-inline-source -->
 		<link href="css/reset.min.css" rel="stylesheet" inline>
@@ -15,17 +15,17 @@
 		<div class="wrapper" data-bind="css: {'failed-google': offlineFallback}">
 			<header class="header">
 				<h1>MyMap: <span class="name">Rothenburg / Tauber</span>
-					<button class="mobile-menu" data-bind="visible: googleWorks, click: showMenu">Menu</button>
+					<button class="mobile-menu" data-bind="visible: googleWorks, click: showMenu"><span class="hamburger" data-bind="css: {active: toggleMenu}">Menu</span></button>
 				</h1>
-				<div class="warning" data-bind="visible: offlineFallback">
+				<p class="warning" data-bind="visible: offlineFallback">
 					Oh No! Google Maps couldn't be reached! <br>
 					Try refresh. Or are you offline?
-				</div>
+				</p>
 			</header>
 			<nav class="nav" data-bind="visible: toggleMenu">
 				<form class="search">
 					<label> Search:
-						<input id="search" placeholder="" type="search" data-bind="textInput: query, event: {keyup: search}" ></input>
+						<input id="search" placeholder="Start typing" type="search" data-bind="textInput: query, event: {keyup: search}" ></input>
 					</label>
 				</form>
 				<ul id="list" class="list" data-bind="foreach: locationList">
@@ -34,12 +34,12 @@
 						<div class="info" data-bind="visible: $parent.offlineFallback, html: googleFail"></div>
 					</li>
 				</ul>
+				<div class="admin" data-bind="visible: adminMode">
+					<p>LocalStorage: </p>
+					<button data-bind="click: showStorage">Console.log</button>
+					<button data-bind="click: clearStorage">Clear</button>
+				</div>
 			</nav>
-			<div class="admin" data-bind="visible: adminMode">
-				<p>LocalStorage: </p>
-				<button data-bind="click: showStorage">Console.log</button>
-				<button data-bind="click: clearStorage">Clear</button>
-			</div>
 		</div>
 		<div id="map" class="map"></div>
 		<script src="js/lib/jQuery-2.1.4.min.js"></script>

@@ -49,13 +49,11 @@ var manageData = {
 	googleMap: false,
 	
 	// Create and collect all data except google map and markers - called from viewModel
-	// --> Foursquare / getData !!!!
 	init: function() {
 		this.myNeighborhood.forEach(function(location) {
 			var newLocation = new Location(location);
 			manageData.locationsArray.push(newLocation);
 			manageData.getFoursquare(newLocation);
-			//manageData.getData(newLocation.name(), newLocation);
 		});
 		return this.locationsArray;
 	},
@@ -78,7 +76,7 @@ var manageData = {
 			conditional = conditional +
 				'<div class="info-fsq"><h2 class="info-head">'+
 				'<a class="info-link" target="_blank" href="https://foursquare.com/v/' + location.foursqID() + '">Foursquare</a>'+
-				'</h2><ul class="info-stats">'+
+				'</h2><ul>'+
 				'<li> Checkins: ' + location.stats().checkinsCount + '</li>' +
 				'<li> Users: ' + location.stats().usersCount + '</li>' +
 				'<li> Tips: ' + location.stats().tipCount + '</li>' +
@@ -100,7 +98,7 @@ var manageData = {
 		contentString = warn +
 			'<div class="info-description">' + location.description() + '</div>' +
 			conditional +
-			'<div class="info-div"> Coordinates: ' + location.lat() + 
+			'<div class="info-footer"> Coordinates: ' + location.lat() + 
 			' | ' + location.lng() + '<br>' +
 			'Category: ' + location.category() + '</div>';
 		
@@ -242,7 +240,6 @@ var manageData = {
 };
 
 // Class for locations
-// foursquare --> true !!!!!
 var Location = function(location) {
 	this.name = ko.observable(location.name);
 	this.description = ko.observable(location.description);
@@ -415,7 +412,7 @@ var viewModel = function() {
 	};
 
 	
-	// Eventhandler for clicking 'x' to clear on search input
+	// Eventhandler for clicking 'x' to clear search input
 	$('#search').on('search', function() {
 		self.search();
 	});
