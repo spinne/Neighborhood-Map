@@ -7,7 +7,7 @@
 * Use the live version at http://spinne.github.io/Neighborhood-Map/
 * Download the Git Repo and open **dist/index.html** in a browser _(only tested in Chorme and Firefox)_
  
-And then just click on the markers or search my tips.
+And then just click on the markers or search my tips by either name or category.
 
 ##### Admin Mode
 There is a hidden admin mode to `console.log()` or `clear()` LocalStorage. To access it type 'admin' into the search field.
