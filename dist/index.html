@@ -3,31 +3,49 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="description" content="Neighborhood Map Project">
+		<meta name="description" content="MyMap: Rothenburg / Tauber - Udacity FEND Neighborhood Map Project">
 		<meta name="author" content="Sylvia Schmidt">
-		<title>Neighborhood Map Project</title>
-		
+		<title>MyMap: Rothenburg / Tauber (Neighborhood Map Project)</title>
+
 		<!-- Added inline attribute to style.css for gulp-inline-source -->
-		<style>body{height:100%;margin:0}body,.map{width:100%}</style>
+		<style>a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{margin:0;padding:0;border:0;font-size:100%;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}ol,ul{list-style:none}*{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box}</style>
+		<style>body{width:100%;height:100%;margin:0;font-family:'Roboto',sans-serif;color:#373737;background-color:#373737}.wrapper{max-width:750px;margin:0 auto}button{padding:1px 5px;color:#faba19;font:inherit;font-size:.9em}.header{padding:10px;color:#faba19;background-color:#fff}.name{color:#373737}.mobile-menu{float:right}.hamburger{position:relative;padding-left:1.25em}.hamburger:before{content:"";position:absolute;top:.25em;left:0;width:1em;height:.125em;border-top:.375em double #faba19;border-bottom:.2em solid #faba19}.active{color:#373737}.active.hamburger:before{border-color:#373737}.nav{background-color:rgba(55,55,55,.75);padding:0 1%}.search{color:#faba19;font-weight:700;text-align:center;padding:10px}.location{padding:5px;color:#faba19;border-top:1px solid #faba19;cursor:pointer}.fallback{margin:10px;padding:10px;background-color:#fff;color:#373737}.warning{border:1px solid red;color:red}.warning,.hint{margin:3px 0;padding:2px;font-size:.8em}.hint{border:1px solid #faba19}.info-head,.info-fsq{margin:0 0 5px}.info-fsq{width:48%;float:left}.info-link{color:#faba19}.info-url{clear:both}.info-contact{margin:0 0 5px;width:48%;float:left}.info-description{margin:10px 0}.info-footer{margin:5px 0 0;clear:both;width:100%;font-size:.8em}.admin{padding:5px;color:#faba19;text-align:center}.map{margin:1%;width:98%;position:absolute;bottom:0;left:0;z-index:-1}@media screen and (min-width:751px){.wrapper{max-width:300px;width:33%;position:fixed;top:0;bottom:0;left:0;margin:0;z-index:10;background-color:rgba(55,55,55,.85)}.failed-google{max-width:750px;width:100%;margin:0 auto;height:100%;position:relative}.header{padding:15px 10px;font-size:1em}.nav{background-color:rgba(0,0,0,0)}.mobile-menu{display:none}}</style>
 	</head>
 	<body>
-		<header>
-			<form>
-				<label> Search:
-					<input placeholder="" type="search" data-bind="textInput: query, event: {keyup: search}" ></input>
-				</label>
-				<div><input type="radio" name="searchBy" value="name" data-bind="checked: searchBy"> Search by name</div>
-				<div><input type="radio" name="searchBy" value="type" data-bind="checked: searchBy"> Search by type</div>
-			</form>
-			<ul id="list" class="list" data-bind="foreach: locationList">
-				<li data-bind="text: name"></li>
-			</ul>
-		</header>
+		<div class="wrapper" data-bind="css: {'failed-google': offlineFallback}">
+			<header class="header">
+				<h1>MyMap: <span class="name">Rothenburg / Tauber</span>
+					<button class="mobile-menu" data-bind="visible: googleWorks, click: showMenu"><span class="hamburger" data-bind="css: {active: toggleMenu}">Menu</span></button>
+				</h1>
+				<p class="warning" data-bind="visible: offlineFallback">
+					Oh No! Google Maps couldn't be reached! <br>
+					Try refresh. Or are you offline?
+				</p>
+			</header>
+			<nav class="nav" data-bind="visible: toggleMenu">
+				<form class="search">
+					<label> Search:
+						<input id="search" placeholder="Start typing" type="search" data-bind="textInput: query, event: {keyup: search}" ></input>
+					</label>
+				</form>
+				<ul id="list" class="list" data-bind="foreach: locationList">
+					<li class="location" data-bind="css: {fallback: $parent.offlineFallback}">
+						<h2 class=" info-head" data-bind="text: name, click: $parent.markerMove"></h2>
+						<div class="info" data-bind="visible: $parent.offlineFallback, html: googleFail"></div>
+					</li>
+				</ul>
+				<div class="admin" data-bind="visible: adminMode">
+					<p>LocalStorage: </p>
+					<button data-bind="click: showStorage">Console.log</button>
+					<button data-bind="click: clearStorage">Clear</button>
+				</div>
+			</nav>
+		</div>
 		<div id="map" class="map"></div>
 		<script src="js/lib/jQuery-2.1.4.min.js"></script>
 		<script src="js/lib/knockout-3.4.0.min.js"></script>
-		<script src="js/app.js"></script>
-		<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdEqXcO5Cz4fCNsJzX8XrsQZk8_LNaG4o&libraries=places&callback=initMap">
+		<script>"use strict";var manageData={myNeighborhood:[{name:"Kriminalmuseum",description:"If medival torture is for you, this is the place to visit.",category:"Museum, Indoor",lat:"49.3755982",lng:"10.179146899999978"},{name:"Molkerei",description:"A nice bar and restaurant with occational live music.",category:"Restaurant, Bar, Food, Music, Indoor",lat:"49.3808427",lng:"10.188578300000017"},{name:"Reiterlesmarkt",description:"Food, drink and Christmas: The famous Christmas market held every december.",category:"Event, Food, Outdoor",lat:"49.3768724",lng:"10.17927510000004"},{name:"Lotos-Garten",description:"A tranquil south-east asian garden with café in the middle of Europe.",category:"Restaurant, Food, Outdoor",lat:"49.3677609",lng:"10.200424399999974"},{name:"Burggarten",description:"The place where the castle used to be is now the city park with beautiful views of the old city.",category:"Park, Outdoor, Landmark",lat:"49.3762149",lng:"10.1740536"}],locationsArray:[],googleMap:!1,init:function(){return this.myNeighborhood.forEach(function(a){var e=new Location(a);manageData.locationsArray.push(e),manageData.getFoursquare(e)}),this.locationsArray},updateInfoWindow:function(a){var e,o="",t="";if(a.foursqFail===!0&&""===a.foursqID()?o='<p class="warning">Sorry! Failed to load Foursquare. Try refresh.</p>':a.foursqFail===!0&&(o='<p class="hint">Hey! Had to use saved Foursquare data, might be outdated.</p>'),""!==a.stats()&&(t=t+'<div class="info-fsq"><h2 class="info-head"><a class="info-link" target="_blank" href="https://foursquare.com/v/'+a.foursqID()+'">Foursquare</a></h2><ul><li> Checkins: '+a.stats().checkinsCount+"</li><li> Users: "+a.stats().usersCount+"</li><li> Tips: "+a.stats().tipCount+"</li></ul></div>"),a.address().hasOwnProperty("address")&&(t=t+'<div class="info-contact"><h2 class="info-head">Address:</h2>'+a.address().address+" <br> Rothenburg / Tauber</div>"),""!==a.url()&&(t=t+'<div class="info-url"><a class="info-link" target="_blank" href="'+a.url()+'"> Visit the '+a.name()+" Website</a></div>"),e=o+'<div class="info-description">'+a.description()+"</div>"+t+'<div class="info-footer"> Coordinates: '+a.lat()+" | "+a.lng()+"<br>Category: "+a.category()+"</div>",manageData.googleMap===!1){var n='<h2 class="info-head">'+a.name()+"</h2>"+e;a.marker().infowin.setContent(n)}else a.googleFail(e)},saveData:function(a){var e=new Date;e=e.getTime();var o=JSON.parse(localStorage.getItem("time")),t=e-o,n=JSON.stringify(a.name);localStorage.getItem(n)?t>864e5&&(localStorage.removeItem("time"),localStorage.removeItem(n),localStorage.setItem("time",JSON.stringify(e)),localStorage.setItem(n,JSON.stringify(a))):(localStorage.setItem("time",JSON.stringify(e)),localStorage.setItem(n,JSON.stringify(a)))},getData:function(a,e){var o=JSON.stringify(a),t=JSON.parse(localStorage.getItem(o));null!==t&&(t.hasOwnProperty("id")&&e.foursqID(t.id),t.hasOwnProperty("url")&&e.url(t.url),t.hasOwnProperty("stats")&&e.stats(t.stats),t.hasOwnProperty("address")&&e.address(t.address)),$.isEmptyObject(e.marker())||manageData.updateInfoWindow(e)},getFoursquare:function(a){var e="https://api.foursquare.com/v2/venues/search?client_id=OYNXUBHDOXCBUDHXT5D1O14S3K2T1YHRCPA0VF3ZMUUF0DLE&client_secret=A5TEMADYGHZE0A0H2X3WEF0G0VKPPHYIRDUAXS3CZBDA2WON&v=20130815&intent=match&ll="+a.lat()+","+a.lng()+"&query="+a.name();$.getJSON(e,function(e){var o=e.response.venues,t={};t.name=a.name();var n=o[0]||"";""!==n?(o[0].hasOwnProperty("id")&&(a.foursqID(o[0].id),t.id=o[0].id),o[0].hasOwnProperty("url")&&(a.url(o[0].url),t.url=o[0].url),o[0].hasOwnProperty("stats")&&(a.stats(o[0].stats),t.stats=o[0].stats),o[0].hasOwnProperty("location")&&(a.address(o[0].location),t.address=o[0].location),manageData.saveData(t)):(a.foursqFail=!0,manageData.updateInfoWindow(a)),$.isEmptyObject(a.marker())&&manageData.googleMap!==!0||manageData.updateInfoWindow(a)}).fail(function(){a.foursqFail=!0,manageData.getData(a.name(),a)})},createMarker:function(){this.locationsArray.forEach(function(a){var e=new Marker(map,a);a.marker(e),manageData.updateInfoWindow(a)})},googleFail:function(){this.locationsArray.forEach(function(a){manageData.updateInfoWindow(a)})}},Location=function(a){this.name=ko.observable(a.name),this.description=ko.observable(a.description),this.category=ko.observable(a.category),this.lat=ko.observable(a.lat),this.lng=ko.observable(a.lng),this.marker=ko.observable(""),this.foursqID=ko.observable(""),this.url=ko.observable(""),this.stats=ko.observable(""),this.address=ko.observable(""),this.googleFail=ko.observable(""),this.foursqFail=""},map,Marker=function(a,e){var o,t=e.name(),n=e.lat(),i=e.lng(),r=new google.maps.LatLng(n,i);return o=new google.maps.Marker({map:a,position:r,title:t}),o.infowin=new google.maps.InfoWindow({maxWidth:300}),o.handleClick=function(){o.infowin.open(a,o),o.setAnimation(google.maps.Animation.BOUNCE),setTimeout(function(){o.setAnimation(null)},1400),$(window).width()>750&&a.panTo(o.getPosition())},o.addListener("click",function(){o.handleClick()}),o},initMap=function(){var a=this;map=new google.maps.Map(document.getElementById("map")),a.scaleMap=function(){var a=$(window).width()<751?.98*($(window).height()-$("header").outerHeight(!0)):.98*$(window).height();$("#map").height(a)},a.resizeMap=function(){a.scaleMap(),map.fitBounds(window.mapBounds)},a.findLocation=function(){var a=window.mapBounds;manageData.myNeighborhood.forEach(function(e){a.extend(new google.maps.LatLng(e.lat,e.lng)),map.fitBounds(a),map.setCenter(a.getCenter())})},a.scaleMap(),window.mapBounds=new google.maps.LatLngBounds,a.findLocation(),manageData.createMarker()};$(window).resize(function(){manageData.googleMap||resizeMap()});var mapError=function(){vm.offlineFallback(!0),vm.toggleMenu(!0),vm.googleWorks(!1),manageData.googleMap=!0,manageData.googleFail()},viewModel=function(){var a=this;a.locationList=ko.observableArray([]),a.completeList=ko.observableArray([]),a.query=ko.observable(""),a.toggleMenu=ko.observable(!1),a.offlineFallback=ko.observable(!1),a.googleWorks=ko.observable(!0),a.adminMode=ko.observable(!1),a.completeList(manageData.init()),a.completeList().forEach(function(e){a.locationList.push(e)}),a.showMenu=function(){a.toggleMenu(!a.toggleMenu())},$(window).width()>750&&a.toggleMenu(!0),$(window).resize(function(){a.toggleMenu($(window).width()>750||a.offlineFallback()===!0?!0:!1)}),a.markerMove=function(e){if(!a.offlineFallback())for(var o=a.locationList().length,t=0;o>t;t++)a.locationList()[t].name===e.name?a.locationList()[t].marker().handleClick():a.locationList()[t].marker().infowin.close()},$("#search").on("search",function(){a.search()}),a.clearStorage=function(){localStorage.clear()},a.showStorage=function(){for(var a=localStorage.length,e=0;a>e;e++)console.log(localStorage.getItem(localStorage.key(e)))},a.search=function(){a.locationList.removeAll();var e=a.query().trim().toLowerCase();a.adminMode("admin"==e?!0:!1),a.completeList().forEach(function(o){o.name().toLowerCase().indexOf(e)>=0||o.category().toLowerCase().indexOf(e)>=0?(a.locationList.push(o),a.offlineFallback()||o.marker().setVisible(!0)):a.offlineFallback()||(o.marker().infowin.close(),o.marker().setVisible(!1))})}},vm=new viewModel;ko.applyBindings(vm);</script>
+		<script defer async src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap" onerror="mapError()">
 		</script>
 	</body>
 </html>

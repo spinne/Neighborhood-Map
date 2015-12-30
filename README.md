@@ -41,6 +41,7 @@ Since I got stuck on this project I've read a lot of stuff, and to tell the trut
 * http://jshint.com/
 * https://css-tricks.com/three-line-menu-navicon/
 * http://www.sitepoint.com/shorthand-javascript-techniques/
+* http://charliegleason.com/articles/deploying-to-github-pages-with-gulp
 
 **Thank you!**
 
@@ -51,5 +52,3 @@ Since I got stuck on this project I've read a lot of stuff, and to tell the trut
 Knockout and jQuery are licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
 Foursquare has its own license [here](https://de.foursquare.com/legal/api/licenseagreement).
 And the terms and usage limits for Google Maps API can be found [here](https://developers.google.com/maps/)
-
-
