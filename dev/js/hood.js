@@ -54,8 +54,8 @@ var manageData = {
 		this.myNeighborhood.forEach(function(location) {
 			var newLocation = new Location(location);
 			manageData.locationsArray.push(newLocation);
-			//manageData.getFoursquare(newLocation);
-			manageData.getData(newLocation.name(), newLocation);
+			manageData.getFoursquare(newLocation);
+			//manageData.getData(newLocation.name(), newLocation);
 		});
 		return this.locationsArray;
 	},
@@ -74,7 +74,7 @@ var manageData = {
 		} 
 		
 		//Check foursquare results
-		if (location.stats() != '') {
+		if (location.stats() !== '') {
 			conditional = conditional +
 				'<div class="info-fsq"><h2 class="info-head">'+
 				'<a class="info-link" target="_blank" href="https://foursquare.com/v/' + location.foursqID() + '">Foursquare</a>'+
@@ -91,7 +91,7 @@ var manageData = {
 				'</div>';
 		}
 		
-		if (location.url() != '') {
+		if (location.url() !== '') {
 			conditional = conditional +
 			'<div class="info-url"><a class="info-link" target="_blank" href="' + location.url() + '"> Visit the ' + location.name() + ' Website</a></div>';
 		}
@@ -109,7 +109,7 @@ var manageData = {
 			var contentStr = '<h2 class="info-head">' + location.name() + '</h2>' + contentString;
 			location.marker().infowin.setContent(contentStr);
 		} else {
-			return contentString;
+			location.googleFail(contentString);
 		}
 	},
 	
@@ -143,7 +143,7 @@ var manageData = {
 		var name = JSON.stringify(dataName);
 		var retrieved = JSON.parse(localStorage.getItem(name));
 		
-		if(retrieved != null) {
+		if(retrieved !== null) {
 			if (retrieved.hasOwnProperty('id')){
 				locData.foursqID(retrieved.id);
 			}
@@ -183,27 +183,35 @@ var manageData = {
 			var forSave = {};
 			forSave.name = locData.name();
 			
-			if (results[0].hasOwnProperty('id')){
-				locData.foursqID(results[0].id);
-				forSave.id = results[0].id;
-			}
+			//See if 'correct' results were returned
+			var testDefine = results[0] || '';
 			
-			if (results[0].hasOwnProperty('url')){
-				locData.url(results[0].url);
-				forSave.url = results[0].url;
-			}
-			
-			if (results[0].hasOwnProperty('stats')){
-				locData.stats(results[0].stats);
-				forSave.stats = results[0].stats;
-			}
-			
-			if (results[0].hasOwnProperty('location')){
-				locData.address(results[0].location);
-				forSave.address = results[0].location;
-			}
+			if (testDefine !== '') {
+				if (results[0].hasOwnProperty('id')){
+					locData.foursqID(results[0].id);
+					forSave.id = results[0].id;
+				}
+				
+				if (results[0].hasOwnProperty('url')){
+					locData.url(results[0].url);
+					forSave.url = results[0].url;
+				}
+				
+				if (results[0].hasOwnProperty('stats')){
+					locData.stats(results[0].stats);
+					forSave.stats = results[0].stats;
+				}
+				
+				if (results[0].hasOwnProperty('location')){
+					locData.address(results[0].location);
+					forSave.address = results[0].location;
+				}
 
-			manageData.saveData(forSave);
+				manageData.saveData(forSave);
+			} else {
+				locData.foursqFail = true;
+				manageData.updateInfoWindow(locData);
+			}
 			
 			// Check if foursquare took longer than google maps
 			if(!$.isEmptyObject(locData.marker())) {
@@ -228,8 +236,7 @@ var manageData = {
 	// If googleMaps fails use InfoWindow content as fallback
 	googleFail: function() {
 		this.locationsArray.forEach(function(location) {
-			var data = manageData.updateInfoWindow(location);
-			location.googleFail(data);
+			manageData.updateInfoWindow(location);
 		});
 	}
 };
@@ -248,7 +255,7 @@ var Location = function(location) {
 	this.stats = ko.observable('');
 	this.address = ko.observable('');
 	this.googleFail = ko.observable('');
-	this.foursqFail = true;
+	this.foursqFail = '';
 };
 
 
