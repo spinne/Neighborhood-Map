@@ -65,7 +65,7 @@ var manageData = {
 		var conditional = '';
 		
 		// Check if foursquare api worked or if data could be retrieved from localStorage
-		if (location.foursqFail === true && location.foursqID() == '') {
+		if (location.foursqFail === true && location.foursqID() === '') {
 			warn = '<p class="warning">Sorry! Failed to load Foursquare. Try refresh.</p>';
 		} else if (location.foursqFail === true) {
 			warn = '<p class="hint">Hey! Had to use saved Foursquare data, might be outdated.</p>';
@@ -102,7 +102,7 @@ var manageData = {
 			' | ' + location.lng() + '<br>' +
 			'Category: ' + location.category() + '</div>';
 		
-		//If google maps works add headline and setContent - else return string without headline
+		//If google maps works add headline and setContent - else set contentString without headline as fallback
 		if (manageData.googleMap === false) {
 			var contentStr = '<h2 class="info-head">' + location.name() + '</h2>' + contentString;
 			location.marker().infowin.setContent(contentStr);
@@ -114,7 +114,7 @@ var manageData = {
 	// Save the foursquare api results in localStorage
 	saveData: function(forSave){
 		var currentTime = new Date();
-		var currentTime = currentTime.getTime();
+		currentTime = currentTime.getTime();
 		
 		var oldTime = JSON.parse(localStorage.getItem('time'));
 		
@@ -136,7 +136,7 @@ var manageData = {
 		}
 	},
 	
-	// If foursquare api can't be reached retrieve save data from localStorage
+	// If foursquare api can't be reached, retrieve save data from localStorage
 	getData: function(dataName, locData){
 		var name = JSON.stringify(dataName);
 		var retrieved = JSON.parse(localStorage.getItem(name));
@@ -160,6 +160,7 @@ var manageData = {
 		}
 		
 		// Check if foursquare took longer than google maps
+		//(works for failed google maps too)
 		if(!$.isEmptyObject(locData.marker())) {
 			manageData.updateInfoWindow(locData);
 		}
@@ -239,6 +240,7 @@ var manageData = {
 	}
 };
 
+
 // Class for locations
 var Location = function(location) {
 	this.name = ko.observable(location.name);
@@ -256,6 +258,10 @@ var Location = function(location) {
 };
 
 
+/*### Google Maps ###*/
+// Global google map object
+var map;
+
 // Class for map markers
 var Marker = function(map, currentData) {
 	var marker;
@@ -272,12 +278,10 @@ var Marker = function(map, currentData) {
 			title: name,
 	});
 	
-	// Create empty InfoWindow as part of marker object
+	// Create InfoWindow as part of marker object
 	marker.infowin = new google.maps.InfoWindow({
 		maxWidth: 300
 	});
-	
-	//marker.infowin.content = ko.observable();
 	
 	//Gets called if marker or list entry is clicked
 	marker.handleClick = function() {
@@ -301,10 +305,7 @@ var Marker = function(map, currentData) {
 	return marker;
 };
 
-// Google Maps
-
-var map;
-
+// Callback function for google maps
 var initMap = function() {
 	var self = this;
 	
@@ -347,7 +348,7 @@ $(window).resize(function() {
 	}
 });
 
-//
+// If google maps fails ...
 var mapError = function(){
 	vm.offlineFallback(true);
 	vm.toggleMenu(true);
@@ -357,18 +358,23 @@ var mapError = function(){
 };
 
 
+/*### Knockout ###*/
 //Search and List
 var viewModel = function() {
 	var self = this;
 	
-	// Define observables
+	// Observables for basic functionality
 	self.locationList = ko.observableArray([]);
 	self.completeList = ko.observableArray([]);
 	self.query = ko.observable('');
-	self.offlineFallback = ko.observable(false);
-	self.adminMode = ko.observable(false);
 	self.toggleMenu = ko.observable(false);
+	
+	// Observables for offline / failed fallback
+	self.offlineFallback = ko.observable(false);
 	self.googleWorks = ko.observable(true);
+	
+	// Observable for LocalStorage Admin Mode
+	self.adminMode = ko.observable(false);
 	
 	// Save the locations in Array - no need to call model everytime for search.
 	self.completeList(manageData.init());
@@ -381,12 +387,13 @@ var viewModel = function() {
 	// Toggle mobile menubar
 	self.showMenu = function () {
 		self.toggleMenu(!self.toggleMenu());
-	}
+	};
 	
 	// Check if window is or gets bigger than 750 px
 	if ($(window).width() > 750) {
 			self.toggleMenu(true);
-	} 
+	}
+	
 	$(window).resize(function() {
 		if ($(window).width() > 750 || self.offlineFallback() === true) {
 			self.toggleMenu(true);
@@ -395,8 +402,8 @@ var viewModel = function() {
 		}
 	});
 	
-	
 	// Open InfoWindow and bounce markers when a list item is clicked
+	// If google maps works
 	self.markerMove = function(listItem) {
 		if (!self.offlineFallback()){
 			var length = self.locationList().length;
@@ -410,7 +417,6 @@ var viewModel = function() {
 			}
 		}
 	};
-
 	
 	// Eventhandler for clicking 'x' to clear search input
 	$('#search').on('search', function() {
@@ -420,7 +426,7 @@ var viewModel = function() {
 	// LocalStorage functions - reached by typing 'admin' in search.
 	self.clearStorage = function() {
 		localStorage.clear();
-	}
+	};
 	
 	self.showStorage = function() {
 		var length = localStorage.length;
@@ -428,7 +434,7 @@ var viewModel = function() {
 		for (var i = 0; i < length; i++) {
 				console.log(localStorage.getItem(localStorage.key(i)));
 		}
-	}
+	};
 	
 	// Search Function
 	self.search = function() {
@@ -445,7 +451,8 @@ var viewModel = function() {
 			self.adminMode(false);
 		}
 
-		// then push only the matching locations back into the array
+		// Then push only the matching locations back into the array
+		// And set marker visibility - if google maps works
 		self.completeList().forEach(function(item){
 			// search by name or by category 
 			if(item.name().toLowerCase().indexOf(searchTerm) >= 0 || item.category().toLowerCase().indexOf(searchTerm) >= 0) {
