@@ -12,7 +12,7 @@
 		<link href="css/style.css" rel="stylesheet" inline>
 	</head>
 	<body>
-		<div class="wrapper">
+		<div class="wrapper" data-bind="css: {'failed-google': offlineFallback}">
 			<header class="header">
 				<h1>MyMap: <span class="name">Rothenburg / Tauber</span>
 					<button class="mobile-menu" data-bind="visible: googleWorks, click: showMenu">Menu</button>
@@ -35,9 +35,10 @@
 					</li>
 				</ul>
 			</nav>
-			<div data-bind="visible: adminMode">
+			<div class="admin" data-bind="visible: adminMode">
+				<p>LocalStorage: </p>
+				<button data-bind="click: showStorage">Console.log</button>
 				<button data-bind="click: clearStorage">Clear</button>
-				<button data-bind="click: showStorage">Show</button>
 			</div>
 		</div>
 		<div id="map" class="map"></div>

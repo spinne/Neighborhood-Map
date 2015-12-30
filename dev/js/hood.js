@@ -213,8 +213,8 @@ var manageData = {
 				manageData.updateInfoWindow(locData);
 			}
 			
-			// Check if foursquare took longer than google maps
-			if(!$.isEmptyObject(locData.marker())) {
+			// Check if foursquare took longer than google maps or google maps failed
+			if(!$.isEmptyObject(locData.marker()) || manageData.googleMap === true) {
 				manageData.updateInfoWindow(locData);
 			}
 			
@@ -289,6 +289,11 @@ var Marker = function(map, currentData) {
 		setTimeout(function () {
 			marker.setAnimation(null);
 			}, 1400);
+		
+		//Making it work better with bigger screens
+		if ( $(window).width() > 750) {	
+			map.panTo(marker.getPosition());
+		}
 	};
 	
 	// Event handler for click on marker in map
@@ -381,6 +386,19 @@ var viewModel = function() {
 		self.toggleMenu(!self.toggleMenu());
 	}
 	
+	// Check if window is or gets bigger than 750 px
+	if ($(window).width() > 750) {
+			self.toggleMenu(true);
+	} 
+	$(window).resize(function() {
+		if ($(window).width() > 750 || self.offlineFallback() === true) {
+			self.toggleMenu(true);
+		} else {
+			self.toggleMenu(false);
+		}
+	});
+	
+	
 	// Open InfoWindow and bounce markers when a list item is clicked
 	self.markerMove = function(listItem) {
 		if (!self.offlineFallback()){
@@ -452,8 +470,3 @@ var viewModel = function() {
 //  viewModel stored in global variable for referencing
 var vm = new viewModel();
 ko.applyBindings(vm);
-
-/*Delay Knockout bindings
-$(window).ready(function () {
-	ko.applyBindings(new viewModel());
-});*/

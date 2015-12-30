@@ -11,7 +11,9 @@ body{
 .wrapper {
 	max-width: 750px;
 	margin: 0 auto;
+
 }
+
 
 /* Header */
 .header {
@@ -27,6 +29,7 @@ body{
 .mobile-menu {
 	float: right;
 }
+
 
 /* Search & List*/
 .nav {
@@ -47,15 +50,13 @@ body{
 	border-top: 1px solid #faba19;
 }
 
+
+/* InfoWindow and Fallback Content */
 .fallback {
 	margin: 10px;
 	padding: 10px;
 	background-color: #fff;
 	color: #373737;
-}
-
-.fallback:nth-child(even) {
-	background-color: #fff;
 }
 
 .warning {
@@ -108,11 +109,60 @@ body{
 	font-size: 0.8em;
 }
 
+/* Admin View */
+.admin {
+	padding: 5px;
+	color:#faba19;
+	text-align: center;
+	background-color: rgba(55,55,55,0.75);
+}
+
+/* Google Maps */
 .map {
 	margin: 1%;
 	width: 98%;
 	position: absolute;
 	bottom: 0;
 	left: 0;
-	z-index:-1;
+	z-index: -1;
 }
+
+
+/* Media Query for 751px and up */
+@media screen and (min-width: 751px) {
+	.wrapper {
+		max-width: 300px;
+		width: 34%;
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left:0;
+		margin: 0;
+		z-index: 10;
+		background-color: rgba(55,55,55,0.85);
+	}
+	
+	.failed-google {
+		max-width: 750px;
+		width: 100%;
+		margin: 0 auto;
+		height: 100%;
+		position: relative;
+	}
+	
+	/* Header */
+	.header {
+		padding: 15px 10px;
+		font-size: 1em;
+	}
+	
+	/* Search & List */
+	.nav {
+		background-color: rgba(0,0,0,0);
+	}
+	
+	.mobile-menu {
+		display: none;
+	}
+}
+
