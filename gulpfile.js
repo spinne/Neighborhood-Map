@@ -3,6 +3,7 @@ var deploy = require('gulp-gh-pages');
 var uglify = require('gulp-uglify');
 var minify = require('gulp-minify-css');
 var inline = require('gulp-inline-source');
+var imageop = require('gulp-image-optimization');
 
 gulp.task('scripts', function(){
 	gulp.src('dev/js/*.js')
@@ -22,6 +23,14 @@ gulp.task('styles', function(){
 });
 
 
+gulp.task('images', function(){
+	gulp.src('dev/img/*')
+		.pipe(imageop({
+			optimizationLevel: 5
+		}))
+		.pipe(gulp.dest('dist/img'));
+});
+
 gulp.task('inline', function(){
 	gulp.src('dev/*.html')
 		.pipe(inline())
@@ -34,4 +43,4 @@ gulp.task('deploy', function () {
     .pipe(deploy())
 });
 
-gulp.task('default', ['scripts', 'styles', 'inline']);
+gulp.task('default', ['scripts', 'styles', 'inline', 'images']);
