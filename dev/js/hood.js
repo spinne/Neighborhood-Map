@@ -22,7 +22,7 @@ var manageData = {
 		{
 			name: 'Reiterlesmarkt',
 			description: 'Food, drink and Christmas: The famous Christmas market held every december.',
-			category: 'Event, Food, Outdoor',
+			category: 'Event, Food, Outdoor, Christmas',
 			lat: '49.3768724',
 			lng: '10.17927510000004'
 		},
@@ -316,7 +316,7 @@ var initMap = function() {
 	self.scaleMap = function() {
 		//Calculate and set the height of the map element, dependend on window width
 		var mapHeight = ($(window).width() < 751) ? ($(window).height() - $('header').outerHeight(true))*0.98 : $(window).height()*0.98;
-		$('#map').height(mapHeight);
+		vm.mapHeight(mapHeight + 'px');
 	};
 
 	// Adjust map on resize
@@ -376,12 +376,29 @@ var viewModel = function() {
 	// Observable for LocalStorage Admin Mode
 	self.adminMode = ko.observable(false);
 
+	// Observable for google map height (responsive)
+	self.mapHeight = ko.observable('');
+	
+	// ObservableArray for awesomplete
+	self.awesompleteArray = ko.observableArray([])
+
 	// Save the locations in Array - no need to call model everytime for search.
 	self.completeList(manageData.init());
 
-	// Populate the locationsList
-	self.completeList().forEach(function(place){
+	// Populate the locationsList and awesompleteArray
+	self.completeList().forEach(function(place) {
 		self.locationList.push(place);
+		self.awesompleteArray.push(place.name());
+		
+		// Make sure each category is only added once
+		var category = place.category().split(', ');
+
+		category.forEach(function(cat) {
+			var check = $.inArray(cat, self.awesompleteArray());
+			if (check < 0) {
+				self.awesompleteArray.push(cat);
+			}
+		});
 	});
 
 	// Toggle mobile menubar
@@ -418,11 +435,6 @@ var viewModel = function() {
 		}
 	};
 
-	// Eventhandler for clicking 'x' to clear search input
-	$('#search').on('search', function() {
-		self.search();
-	});
-
 	// LocalStorage functions - reached by typing 'admin' in search.
 	self.clearStorage = function() {
 		localStorage.clear();
@@ -453,15 +465,15 @@ var viewModel = function() {
 
 		// Then push only the matching locations back into the array
 		// And set marker visibility - if google maps works
-		self.completeList().forEach(function(item){
+		self.completeList().forEach(function(item) {
 			// search by name or by category
 			if(item.name().toLowerCase().indexOf(searchTerm) >= 0 || item.category().toLowerCase().indexOf(searchTerm) >= 0) {
 				self.locationList.push(item);
-				if (!self.offlineFallback()){
+				if (!self.offlineFallback()) {
 					item.marker().setVisible(true);
 				}
 			} else {
-				if (!self.offlineFallback()){
+				if (!self.offlineFallback()) {
 					item.marker().infowin.close();
 					item.marker().setVisible(false);
 				}
@@ -469,7 +481,6 @@ var viewModel = function() {
 		});
 	};
 };
-
 
 //  viewModel stored in global variable for referencing
 var vm = new viewModel();
