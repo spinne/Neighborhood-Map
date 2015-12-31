@@ -25,6 +25,7 @@ The application also uses:
 * Google Maps API
 * Foursquare API
 * Awesomplete
+* Icons from the Map Icons Collection
 * and uses LocalStorage
 
 There is a fallback, if
@@ -51,10 +52,17 @@ Since I got stuck on this project I've read a lot of stuff, and to tell the trut
 
 **Thank you!**
 
+##### Special Note:
+* [The Map Icons Collection](https://mapicons.mapsmarker.com/)
+
+I've used a couple of these great icons to 'prettify' MyMap. So, a great big thank you to their creators!
+
+
 ## Issues
 * Google Docs Extenstion: For some reason I had trouble with Google Maps (not click or movable) when I couldn't use my fallback data for Foursquare (Empty LocalStorage). Once I deactivated the Google Docs Chrome Extenstions it worked.
 
 ## License
 Awesomplete, Knockout and jQuery are licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
+The [Map Icons Collection](https://mapicons.mapsmarker.com/) is licensed under [Creative Commons 3.0 BY-SA](http://creativecommons.org/licenses/by-sa/3.0/).
 Foursquare has its own license [here](https://de.foursquare.com/legal/api/licenseagreement).
 And the terms and usage limits for Google Maps API can be found [here](https://developers.google.com/maps/)

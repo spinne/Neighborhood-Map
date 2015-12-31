@@ -15,14 +15,14 @@ var manageData = {
 		{
 			name: 'Molkerei',
 			description: 'A nice bar and restaurant with occational live music.',
-			category: 'Restaurant, Bar, Food, Music, Indoor',
+			category: 'Bar, Restaurant, Food, Music, Indoor',
 			lat: '49.3808427',
 			lng: '10.188578300000017'
 		},
 		{
 			name: 'Reiterlesmarkt',
 			description: 'Food, drink and Christmas: The famous Christmas market held every december.',
-			category: 'Event, Food, Outdoor, Christmas',
+			category: 'Christmas, Event, Food, Outdoor',
 			lat: '49.3768724',
 			lng: '10.17927510000004'
 		},
@@ -270,12 +270,29 @@ var Marker = function(map, currentData) {
 	var dataLng = currentData.lng();
 
 	var location = new google.maps.LatLng(dataLat,dataLng);
+	
+	// Set custom icons, dependend on category.
+	var category = currentData.category().split(', ');
+	var icon = '';
 
+	if (category[0] === 'Restaurant') {
+		icon = 'img/restaurant.png';
+	} else if (category[0] === 'Bar') {
+		icon = 'img/bar.png';
+	} else if (category[0] === 'Christmas') {
+		icon = 'img/snowy-2.png';
+	} else if (category[0] === 'Park') {
+		icon = 'img/tree.png';
+	} else if (category[0] === 'Museum') {
+		icon = 'img/historical_museum.png';
+	}
+	
 	// Create the marker for the current data set
 	marker = new google.maps.Marker({
 			map: map,
 			position: location,
 			title: name,
+			icon: icon
 	});
 
 	// Create InfoWindow as part of marker object
