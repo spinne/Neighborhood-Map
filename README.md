@@ -6,7 +6,7 @@
 ## How to use it
 * Use the live version at http://spinne.github.io/Neighborhood-Map/
 * Download the Git Repo and open **dist/index.html** in a browser _(only tested in Chorme and Firefox)_
- 
+
 And then just click on the markers or search my tips by either name or category.
 
 ##### Autocomplete
@@ -34,7 +34,7 @@ There is a fallback, if
 ... but the MyMap won't be as much fun.
 
 ### Resources
-Since I got stuck on this project I've read a lot of stuff, and to tell the truth I can't remember even half of it. But there are a few resources I've used a lot: 
+Since I got stuck on this project I've read a lot of stuff, and to tell the truth I can't remember even half of it. But there are a few resources I've used a lot:
 * Udacity Discussion Forum
 * Google Maps API Documentation
 * Knockout Documentation and Tutorials
@@ -52,7 +52,7 @@ Since I got stuck on this project I've read a lot of stuff, and to tell the trut
 **Thank you!**
 
 ## Issues
-* Google Docs Extenstion: For some reason I had trouble with Google Maps (not click or movable) when I couldn't use my fallback data for Foursquare (Empty LocalStorage). Once I deactivated the Google Docs Chrome Extenstions it worked. 
+* Google Docs Extenstion: For some reason I had trouble with Google Maps (not click or movable) when I couldn't use my fallback data for Foursquare (Empty LocalStorage). Once I deactivated the Google Docs Chrome Extenstions it worked.
 
 ## License
 Awesomplete, Knockout and jQuery are licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).

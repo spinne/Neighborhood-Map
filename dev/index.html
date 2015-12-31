@@ -26,7 +26,7 @@
 			<nav class="nav" data-bind="visible: toggleMenu">
 				<form class="search">
 					<label> Search:
-						<input id="search" class="awesomplete" placeholder="Start typing" type="search" data-bind="textInput: query, event: {keyup: search, search: search}, attr: { 'data-list': awesompleteArray }" ></input>
+						<input id="search" class="awesomplete" placeholder="Start typing" type="search" data-minchars="1" data-bind="event: {keyup: search, search: search, 'awesomplete-selectcomplete': aweFunc}, attr: { 'data-list': awesompleteArray }, textInput: query" ></input>
 					</label>
 				</form>
 				<ul id="list" class="list" data-bind="foreach: locationList">

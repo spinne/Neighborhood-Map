@@ -378,9 +378,9 @@ var viewModel = function() {
 
 	// Observable for google map height (responsive)
 	self.mapHeight = ko.observable('');
-	
+
 	// ObservableArray for awesomplete
-	self.awesompleteArray = ko.observableArray([])
+	self.awesompleteArray = ko.observableArray([]);
 
 	// Save the locations in Array - no need to call model everytime for search.
 	self.completeList(manageData.init());
@@ -389,7 +389,7 @@ var viewModel = function() {
 	self.completeList().forEach(function(place) {
 		self.locationList.push(place);
 		self.awesompleteArray.push(place.name());
-		
+
 		// Make sure each category is only added once
 		var category = place.category().split(', ');
 
@@ -400,6 +400,13 @@ var viewModel = function() {
 			}
 		});
 	});
+
+	// Awesomplete workaround: Manual update of self.query()
+	// Because ko.observable isn't updated when autocomplete option is selected
+	self.aweFunc = function() {
+		self.query($('#search').val());
+		self.search();
+	};
 
 	// Toggle mobile menubar
 	self.showMenu = function () {
