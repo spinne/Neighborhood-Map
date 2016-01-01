@@ -456,8 +456,9 @@ var viewModel = function() {
 					self.locationList()[i].marker().infowin.close();
 				}
 			}
-			
-			self.showMenu();
+			if($(window).width() < 751) {
+				self.showMenu();
+			}
 		}
 	};
 
