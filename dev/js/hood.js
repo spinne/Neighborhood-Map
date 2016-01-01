@@ -270,7 +270,7 @@ var Marker = function(map, currentData) {
 	var dataLng = currentData.lng();
 
 	var location = new google.maps.LatLng(dataLat,dataLng);
-	
+
 	// Set custom icons, dependend on category.
 	var category = currentData.category().split(', ');
 	var icon = '';
@@ -286,7 +286,7 @@ var Marker = function(map, currentData) {
 	} else if (category[0] === 'Museum') {
 		icon = 'img/historical_museum.png';
 	}
-	
+
 	// Create the marker for the current data set
 	marker = new google.maps.Marker({
 			map: map,
@@ -425,7 +425,7 @@ var viewModel = function() {
 		self.search();
 	};
 
-	// Toggle mobile menubar
+	// Toggle mobile menu
 	self.showMenu = function () {
 		self.toggleMenu(!self.toggleMenu());
 	};
@@ -444,7 +444,7 @@ var viewModel = function() {
 	});
 
 	// Open InfoWindow and bounce markers when a list item is clicked
-	// If google maps works
+	// And mobile menu closes - All only if google maps works
 	self.markerMove = function(listItem) {
 		if (!self.offlineFallback()){
 			var length = self.locationList().length;
@@ -456,6 +456,8 @@ var viewModel = function() {
 					self.locationList()[i].marker().infowin.close();
 				}
 			}
+			
+			self.showMenu();
 		}
 	};
 
